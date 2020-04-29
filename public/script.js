@@ -18,9 +18,13 @@ const app = {};
     link.addEventListener("click", () => {
       const href = link.getAttribute("href");
 
-     
       if (app.route === href) return;
-      else [app.route = href, console.debug({ "new route": href })];
+      else
+        [
+          (app.route = href),
+          console.debug({ "new route": href }),
+          history.pushState(null, null, href)
+        ];
 
       for (const _link of $$("navlink")) {
         _link.setAttribute(
@@ -41,5 +45,14 @@ const app = {};
       }
     });
   }
-  setTimeout(() => setActiveBlock("start"));
+  //default / server->client routing
+  setTimeout(() =>
+    setActiveBlock(
+      $("meta[name=from]")
+        .getAttribute("value")
+        .replace("{{from}}", "") ||
+        location.href.split("/")[3] ||
+        "start"
+    )
+  );
 }

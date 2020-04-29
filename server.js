@@ -1,36 +1,11 @@
-// server.js
-// where your node app starts
+//copy by Blu, Kau, Nikei
 
-// we've started you off with Express (https://expressjs.com/)
-// but feel free to use whatever libraries or frameworks you'd like through `package.json`.
-const express = require("express");
-const app = express();
+const //imports
+  express = require("express"),
+  app = express(),
+  fs = require("fs");
 
-// our default array of dreams
-const dreams = [
-  "Find and count some sheep",
-  "Climb a really tall mountain",
-  "Wash the dishes"
-];
-
-// make all the files in 'public' available
-// https://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));
-
-// https://expressjs.com/en/starter/basic-routing.html
-app.get("/", (req, res) => {
-  res.sendFile(`${__dirname}/views/index.html`);
-});
-
-// https://expressjs.com/en/starter/basic-routing.html
-app.get("/new", (req, res) => {
-  res.sendFile(`${__dirname}/views/new.html`);
-});
-
-// https://expressjs.com/en/starter/basic-routing.html
-app.get("/wat", (req, res) => {
-  res.sendFile(`${__dirname}/views/stats.html`);
-});
 
 //UPLOADING
 const isUpload = req => {
@@ -41,6 +16,7 @@ const isUpload = req => {
   req.headers(["sec-fetch-mode"]) !== void 0;
 };
 
+//todo: use actual mysql db for posts
 const DB = {
   TEST1: {
     file:
@@ -60,12 +36,21 @@ const DB = {
   }
 };
 
-app.set("trust proxy", true)
+app.set("trust proxy", true);
+
+// https://expressjs.com/en/starter/basic-routing.html
+app.get("/", (req, res) => {
+  res.sendFile(`${__dirname}/views/index.html`);
+});
 
 //bongo
 app.get("/*", (req, res, next) => {
   const _soos = +req.originalUrl.split("soos/")[1];
-  console.debug({IP: req.ip, url: `${req.protocol}//${req.headers.host}${req.originalUrl}`, soos: _soos !== NaN ? _soos: 404});
+  console.debug({
+    IP: req.ip,
+    url: `${req.protocol}//${req.headers.host}${req.originalUrl}`,
+    soos: _soos !== NaN ? _soos : 404
+  });
   next();
 });
 
@@ -95,14 +80,24 @@ app.get("/soos/:id", (req, res) => {
     : res.status(404) && res.end();
 });
 
-//CONCEPT4
+//CONCEPT4 ✓
 //-> /x
 app.get("/:id", (req, res) => {
   const ID = req.params.id,
     ENTRY = DB[ID];
   ID && ENTRY
-    ? [res.redirect(isUpload(req) ? DB[ID].file : DB[ID].web)]
-    : res.status(404) && res.end();
+    ? [res.redirect(isUpload(req) ? DB[ID].file : DB[ID].web)] //link found, redirect to link
+    : //entry not found, check if path is number...
+      res.write(
+        fs
+          .readFileSync(`${__dirname}/views/index.html`, "utf8")
+          .replace("{{from}}", isNaN(+ID) ? req.originalUrl : 404) //if path is number but not found, notify client about 404, else about serverside path
+      ) && res.end();
+});
+
+//save post
+app.post("/", (req, res) => {
+  console.log(req.query.token);
 });
 
 // listen for requests :)
