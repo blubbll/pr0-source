@@ -30,17 +30,31 @@ const isUpload = req => {
   );
 };
 
-const TEST = {
-  file:
-    "https://www.welt.de/img/wirtschaft/mobile149047426/5551624067-ci23x11-w1280/Lego-Schuhe-hergestellt-von-der-franzoesi-8.jpg",
-  web:
-    "https://www.welt.de/wirtschaft/article149047427/So-genial-ist-die-Idee-hinter-den-Lego-Schuhen.html"
+const DB = {
+  TEST1: {
+    file:
+      "https://www.welt.de/img/wirtschaft/mobile149047426/5551624067-ci23x11-w1280/Lego-Schuhe-hergestellt-von-der-franzoesi-8.jpg",
+    web:
+      "https://www.welt.de/wirtschaft/article149047427/So-genial-ist-die-Idee-hinter-den-Lego-Schuhen.html"
+  },
+  1588181276629: {
+    file:
+      "https://i.pinimg.com/originals/af/2e/50/af2e50f5458d5019831d53bc02634f0c.jpg",
+    web: "https://www.deviantart.com/dlowell/art/Cmc-Matrix-527689606"
+  }
 };
 
 app.get("/test", (req, res) => {
   console.debug(req.headers["user-agent"]);
+  res.redirect(isUpload(req) ? DB.TEST1.file : DB.TEST1.web);
+});
 
-  res.redirect(isUpload(req) ? TEST.file : TEST.web);
+//soos?id=333
+app.get("/soos", (req, res) => {
+  const ID = req.query.id;
+  ID
+    ? [res.redirect(isUpload(req) ? DB[ID].file : DB[ID].web)]
+    : res.status(404);
 });
 
 // send the default array of dreams to the webpage
