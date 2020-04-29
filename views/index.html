@@ -27,14 +27,57 @@
     <div id="page">
       <div id="head">
         <div id="head-content">
-          <span id="logo"><a href="/" active>PR0🔗LINK</a></span>
-          <a href="/new">Neuer Link</a>
-          <a href="/wat">???</a>
+          <span id="logo"><navlink href="/" active>PR0🔗LINK</navlink></span>
+          <navlink href="/new">Neuer Link</navlink>
+          <navlink href="/wat">???</navlink>
         </div>
       </div>
-      <block>
+      <block id="start">
         Nutzerverwaltete sources halt. Cool oder?<br />
         #hanloMarina
+      </block>
+      <block id="new">
+        <h2>Neuer Link</h2>
+        <div class="form-row">
+          <label>File-Direktlink:</label>
+          <input
+            type="text"
+            name="fileUrl"
+            class="text-line"
+            placeholder="Direktlink"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-row">
+          <label>Web:</label>
+          <input
+            type="url"
+            name="fileSource"
+            class="text-line"
+            placeholder="Quellseiten-Adresse"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-row">
+          <label>Token</label>
+          <input
+            type="url"
+            name="token"
+            class="text-line"
+            placeholder="App-Token eingeben du Spacken"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-row">
+          <input
+            type="submit"
+            value="Neuen Link erstellen"
+            class="confirm settings-save"
+          />
+        </div>
+      </block>
+      <block id="wat">
+        hm
       </block>
     </div>
   </body>

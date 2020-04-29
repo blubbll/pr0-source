@@ -8,8 +8,11 @@ body {
 /* Seite */
 #page {
   display: flex;
+  display: -ms-flexbox;
   justify-content: center;
+  -ms-flex-pack: center;
   align-items: center;
+  -ms-flex-align: center;
   height: inherit;
 }
 /* Head */
@@ -21,19 +24,23 @@ body {
 /* Head-inner */
 #head-content {
   display: flex;
+  display: -ms-flexbox;
   padding: 1vh 5vw;
   align-items: center;
+  -ms-flex-align: center;
   height: auto !important;
 }
 /* Links im Head */
-#head-content a {
+#head-content navlink {
   margin-right: 1rem;
   color: #aaa;
+  cursor: pointer;
+  user-select: none;
 }
-#head-content a[active]{
+#head-content navlink[active="true"] {
   color: white;
-} 
-#head-content a:hover {
+}
+#head-content navlink:hover {
   color: white;
 }
 /* Logo halt */
@@ -41,17 +48,24 @@ body {
   font-size: 2.5vh;
   margin-right: 2rem;
 }
-#logo a {
+#logo navlink {
   color: lightgray;
 }
-#logo a:hover {
+#logo navlink:hover {
   color: white;
 }
 /* einfacher Content-block */
 block {
+  display: none;
   width: 50vh;
   max-width: 75vw;
   min-width: 30vw;
+  flex-direction: column;
+  -ms-flex-direction: column;
+}
+
+block[active="true"] {
+  display: flex !important;
 }
 
 /* Fixes für Inputs & Button */

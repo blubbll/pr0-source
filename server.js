@@ -95,6 +95,16 @@ app.get("/soos/:id", (req, res) => {
     : res.status(404) && res.end();
 });
 
+//CONCEPT4
+//-> /x
+app.get("/:id", (req, res) => {
+  const ID = req.params.id,
+    ENTRY = DB[ID];
+  ID && ENTRY
+    ? [res.redirect(isUpload(req) ? DB[ID].file : DB[ID].web)]
+    : res.status(404) && res.end();
+});
+
 // listen for requests :)
 const listener = app.listen(process.env.PORT, () => {
   console.log("Your app is listening on port " + listener.address().port);
