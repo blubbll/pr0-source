@@ -18,8 +18,18 @@ const dreams = [
 app.use(express.static("public"));
 
 // https://expressjs.com/en/starter/basic-routing.html
-app.get("/", (request, response) => {
-  response.sendFile(__dirname + "/views/index.html");
+app.get("/", (req, res) => {
+  res.sendFile(`${__dirname}/views/index.html`);
+});
+
+// https://expressjs.com/en/starter/basic-routing.html
+app.get("/new", (req, res) => {
+  res.sendFile(`${__dirname}/views/new.html`);
+});
+
+// https://expressjs.com/en/starter/basic-routing.html
+app.get("/wat", (req, res) => {
+  res.sendFile(`${__dirname}/views/stats.html`);
 });
 
 //UPLOADING
@@ -55,7 +65,7 @@ app.set("trust proxy", true)
 //bongo
 app.get("/*", (req, res, next) => {
   const _soos = +req.originalUrl.split("soos/")[1];
-  console.debug({url: `${req.protocol}//${req.headers.host}${req.originalUrl}`, soos: _soos !== NaN ? _soos: 404});
+  console.debug({IP: req.ip, url: `${req.protocol}//${req.headers.host}${req.originalUrl}`, soos: _soos !== NaN ? _soos: 404});
   next();
 });
 
@@ -83,12 +93,6 @@ app.get("/soos/:id", (req, res) => {
   ID && ENTRY
     ? [res.redirect(isUpload(req) ? DB[ID].file : DB[ID].web)]
     : res.status(404) && res.end();
-});
-
-// send the default array of dreams to the webpage
-app.get("/dreams", (request, response) => {
-  // express helps us take JS objects and send them as JSON
-  response.json(dreams);
 });
 
 // listen for requests :)
