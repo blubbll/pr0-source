@@ -50,9 +50,12 @@ const DB = {
   }
 };
 
+app.set("trust proxy", true)
+
 //bongo
 app.get("/*", (req, res, next) => {
-  console.debug(req.originalUrl);
+  const _soos = +req.originalUrl.split("soos/")[1];
+  console.debug({url: `${req.protocol}//${req.headers.host}${req.originalUrl}`, soos: _soos !== NaN ? _soos: 404});
   next();
 });
 
