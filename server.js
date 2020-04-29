@@ -51,10 +51,11 @@ app.get("/test", (req, res) => {
 
 //soos?id=333
 app.get("/soos", (req, res) => {
-  const ID = req.query.id;
-  ID
+  const ID = req.query.id,
+        ENTRY= DB[ID];
+  ID && ENTRY
     ? [res.redirect(isUpload(req) ? DB[ID].file : DB[ID].web)]
-    : res.status(404);
+    : res.status(404) && res.end();
 });
 
 // send the default array of dreams to the webpage
