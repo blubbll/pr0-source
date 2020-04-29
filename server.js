@@ -22,18 +22,26 @@ app.get("/", (request, response) => {
   response.sendFile(__dirname + "/views/index.html");
 });
 
-app.get("/test", (req, res) => {
-  
-  console.debug(req.headers["user-agent"])
-  
-  
-  //UPLOADING
-  if(req.headers["user-agent"] === "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36"){
-    
-  }
-  
-})
+//UPLOADING
+const isUpload = req => {
+  return (
+    req.headers["user-agent"] ===
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36"
+  );
+};
 
+const TEST = {
+  file:
+    "https://www.welt.de/img/wirtschaft/mobile149047426/5551624067-ci23x11-w1280/Lego-Schuhe-hergestellt-von-der-franzoesi-8.jpg",
+  web:
+    "https://www.welt.de/wirtschaft/article149047427/So-genial-ist-die-Idee-hinter-den-Lego-Schuhen.html"
+};
+
+app.get("/test", (req, res) => {
+  console.debug(req.headers["user-agent"]);
+
+  res.redirect(isUpload(req) ? TEST.file : TEST.web);
+});
 
 // send the default array of dreams to the webpage
 app.get("/dreams", (request, response) => {
