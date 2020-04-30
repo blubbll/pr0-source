@@ -52,7 +52,7 @@ div#page {
   position: relative;
 }
 
-div#head {
+header {
   margin: 0 auto;
   position: fixed;
   top: 0;
@@ -63,10 +63,18 @@ div#head {
   -webkit-transform: translateZ(0);
 }
 
-#head-content {
+header-content {
   position: relative;
   background-color: rgba(0, 0, 0, 0.9);
   height: 100%;
+}
+
+footer a {
+    color: #888;
+}
+
+footer a:hover {
+    color: #F5F7F6;
 }
 
 input.submit {
