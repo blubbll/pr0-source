@@ -10,7 +10,8 @@ const HOST = $("base").getAttribute("href");
 const app = {};
 {
   const setActiveView = path => {
-    console.debug("Setting active view to", path);
+    console.debug("active view was set to", path);
+
     for (const _view of $$("view")) {
       _view.setAttribute(
         "active",
@@ -31,7 +32,12 @@ const app = {};
 
   window.onload = () => {
     {
-      setActiveView(getPath());
+      const path = getPath();
+      console.debug("Coming from path", path);
+      if ($(`view[path="/${location.href.split("/")[3]}"]`)) {
+        app.path = path;
+      }
+      setActiveView(path);
     }
   };
 
@@ -46,11 +52,11 @@ const app = {};
       const href = link.getAttribute("href");
 
       if (app.path === href) return;
-      else
-        [
-          setActiveView(`/${href.split("/")[1]}`),
-          history.pushState(null, null, href)
-        ];
+      console.debug("Navigating to path", href);
+
+      setActiveView(`/${href.split("/")[1]}`);
+      history.pushState(null, null, href);
+      app.path = href;
 
       for (const _link of $$("#head-content navlink")) {
         _link.setAttribute(
