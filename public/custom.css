@@ -45,8 +45,9 @@ navlink:hover {
 }
 /* Logo halt */
 #logo {
-  font-size: 1.5rem;
-  margin-right: 2rem;
+  font-size: 1.7rem;
+  margin: 0 2rem 0 1rem;
+  font-family: Consolas;
 }
 #logo navlink {
   color: lightgray;
@@ -77,7 +78,7 @@ button {
   width: 100% !important;
 }
 
-muted{
+muted {
   color: dimgray;
   font-size: 90%;
 }

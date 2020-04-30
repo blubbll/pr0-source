@@ -5,8 +5,6 @@ const //selectors
 
 console.clear();
 
-const HOST = $("base").getAttribute("href");
-
 const app = {};
 {
   const setActiveView = path => {
@@ -31,7 +29,10 @@ const app = {};
   };
 
   window.onload = () => {
+    
+
     {
+      fetch("/welcome", {method: "POST"})
       const path = getPath();
       console.debug("Coming from path", path);
       if ($(`view[path="/${location.href.split("/")[3]}"]`)) {

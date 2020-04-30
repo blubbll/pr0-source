@@ -8,13 +8,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="pr0.link" />
+    <script>
+      {
+        //upgrade request clientside
+        if (location.protocol === "http:") {
+          location.replace(location.href.replace("http://", "https://"));
+        }
+      }
+    </script>
     <link
       id="favicon"
       rel="icon"
       href="https://cdn.glitch.com/bc9f669d-cc9f-4a65-88ee-6da1ff7d4ef0%2Flink_1f517.png?v=1588187945326"
       type="image/png"
     />
-    <base href="{{abs}}" />
+    <base href="https://pr0.link/" />
     <link rel="stylesheet" href="./pr0.css" />
     <!-- server-> client path messaging -->
     <meta name="from" value="{{from}}" />
@@ -27,16 +35,18 @@
       <div id="head">
         <div id="head-content">
           <span id="logo"><navlink href="/" active>PR0🔗LINK</navlink></span>
-          <navlink href="/new">Neuer Link</navlink>
+          <navlink href="/new">+link (wip)</navlink>
           <navlink href="/wat">???</navlink>
         </div>
       </div>
       <view path="/">
         Nutzerverwaltete sources halt. Cool oder?<br />
-        #hanloMarina
+        <br/>
+        <muted>#hanloMarina</muted>
       </view>
       <view path="/new">
-        <h2><u>Neuer Link:</u></h2><br/>
+        <h2><u>Neuer Link:</u></h2>
+        <br />
         <div class="form-row">
           <label>File-Direktlink:</label>
           <input
@@ -71,7 +81,7 @@
           <input
             type="submit"
             value="Neuen Link erstellen"
-            class="confirm settings-save"
+            class="confirm-button"
           />
         </div>
       </view>
