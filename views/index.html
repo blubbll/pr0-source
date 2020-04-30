@@ -14,12 +14,13 @@
       href="https://cdn.glitch.com/bc9f669d-cc9f-4a65-88ee-6da1ff7d4ef0%2Flink_1f517.png?v=1588187945326"
       type="image/png"
     />
+    <base href="{{abs}}" />
     <link rel="stylesheet" href="./pr0.css" />
     <!-- server-> client path messaging -->
     <meta name="from" value="{{from}}" />
     <!-- assets -->
     <link rel="stylesheet" href="./custom.css" />
-    <script src="/custom.js" defer></script>
+    <script src="./custom.js" defer></script>
   </head>
   <body>
     <div id="page">
@@ -30,11 +31,11 @@
           <navlink href="/wat">???</navlink>
         </div>
       </div>
-      <view id="start">
+      <view path="/">
         Nutzerverwaltete sources halt. Cool oder?<br />
         #hanloMarina
       </view>
-      <view id="new">
+      <view path="/new">
         <h2>Neuer Link</h2>
         <div class="form-row">
           <label>File-Direktlink:</label>
@@ -74,14 +75,30 @@
           />
         </div>
       </view>
-      <view id="wat">
+      <view path="/wat">
         hm
       </view>
-      <view id="204">
+      <view path="/204">
         ZOMFG, 204 ¯\_(ツ)_/¯
+        <br /><br />
+        <muted
+          ><i
+            >(Die Anfrage wurde erfolgreich durchgeführt, die Antwort enthält
+            jedoch bewusst keine Daten.)</i
+          ></muted
+        >
+        <br /><navlink href="/">/start</navlink>
       </view>
-      <view id="404">
+      <view path="/400">
+        ZOMFG, 204 ¯\_(ツ)_/¯
+        <br /><br />
+        <muted><i>( Die Anfrage-Nachricht war fehlerhaft aufgebaut.)</i></muted>
+        <br /><navlink href="/">/start</navlink>
+      </view>
+      <view path="/404">
         NICHTS GEFUNDEN ¯\_(ツ)_/¯
+        <br /><br />
+        <muted><i>(Die angeforderte Ressource wurde nicht gefunden.)</i></muted>
       </view>
     </div>
   </body>

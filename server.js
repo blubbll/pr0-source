@@ -40,7 +40,11 @@ app.set("trust proxy", true);
 
 // https://expressjs.com/en/starter/basic-routing.html
 app.get("/", (req, res) => {
-  res.sendFile(`${__dirname}/views/index.html`);
+      res.write(
+        fs
+          .readFileSync(`${__dirname}/views/index.html`, "utf8")
+          .replace("{{abs}}", `${req.protocol}://${req.host}`) //absolute base
+      ) && res.end();
 });
 
 //bongo
@@ -91,8 +95,18 @@ app.get("/:id", (req, res) => {
       res.write(
         fs
           .readFileSync(`${__dirname}/views/index.html`, "utf8")
-          .replace("{{from}}", isNaN(+ID) ? 204 : 404) //if path is number but not found, notify client about 404, else about invalid serverside path
+          .replace("{{abs}}", `${req.protocol}://${req.host}`) //absolute base
+          .replace("{{from}}", `/${isNaN(+ID) ? 204 : 404}`) //if path is number but not found, notify client about 404, else about invalid serverside path
       ) && res.end();
+});
+
+app.get("/*", (req, res) => {
+  res.write(
+    fs
+      .readFileSync(`${__dirname}/views/index.html`, "utf8")
+      .replace("{{abs}}", `${req.protocol}://${req.host}`) //absolute base
+      .replace("{{from}}", "/400") //how did we get here lol
+  ) && res.end();
 });
 
 //save post
