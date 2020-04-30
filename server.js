@@ -75,6 +75,7 @@ app.post("/welcome", (req, res) => {
   //  res.redirect(`https://${req.headers.host}${req.originalUrl}`);
   //}
   log(req);
+  res.json("yo")
 });
 
 //bongo
