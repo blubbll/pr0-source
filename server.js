@@ -12,6 +12,13 @@ const isUpload = req => {
   return req.headers["referer"] !== void 0;
 };
 
+const getType = req => {
+  if (req.headers["referer"] !== void 0) {
+    return "upload";
+  }
+  return "direct";
+};
+
 //todo: use actual mysql db for posts
 const DB = {
   TEST1: {
@@ -47,8 +54,9 @@ app.get("/", (req, res) => {
 app.get("/*", (req, res, next) => {
   const _soos = +req.originalUrl.split("/")[1];
   console.debug({
+    type: getType(req),
     IP: req.ip,
-    url: `${req.protocol}//${req.headers.host}${req.originalUrl}`,
+    url: `${req.protocol}://${req.headers.host}${req.originalUrl}`,
     soos: _soos !== NaN ? _soos : 404
   });
   next();
