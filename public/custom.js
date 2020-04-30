@@ -7,6 +7,7 @@ console.clear();
 
 const app = {};
 {
+  //set active view
   const setActiveView = path => {
     console.debug("active view was set to", path);
 
@@ -18,6 +19,18 @@ const app = {};
     }
   };
 
+  //sync activ enav link
+  const syncNavlinks = (href) =>{
+  for (const _link of $$("header-content navlink")) {
+       
+        _link.setAttribute(
+          "active",
+          _link.getAttribute("href") === href ? true : false
+        );
+      }
+  
+  }
+  //get current path
   const getPath = () => {
     return $(`view[path="/${location.href.split("/")[3]}"]`) //does path exist as view
       ? `/${location.href.split("/")[3]}` //go to that view
@@ -37,6 +50,7 @@ const app = {};
         app.path = path;
       }
       setActiveView(path);
+      syncNavlinks(path);
     }
   };
 
@@ -64,12 +78,7 @@ const app = {};
         location.reload(true);
       }
 
-      for (const _link of $$("#head-content navlink")) {
-        _link.setAttribute(
-          "active",
-          _link.getAttribute("href") === href ? true : false
-        );
-      }
+      syncNavlinks(href);
     });
   }
 }

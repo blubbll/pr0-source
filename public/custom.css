@@ -27,21 +27,21 @@ header-content,
 footer-content {
   display: flex;
   display: -ms-flexbox;
-  padding: 0.4rem 1vw;
+  padding: 0.4rem 5vw;
   align-items: center;
   -ms-flex-align: center;
   height: auto !important;
 }
 /* Links im Head */
 navlink {
-  margin-right: 0.7vw;
+  margin-right: 1.2vw;
   padding: 0.1rem 0.3rem;
   color: #aaa;
   cursor: pointer;
   user-select: none;
 }
 navlink[active="true"] {
-  color: white;
+  color: white!important;
 }
 navlink:hover {
   color: white;
@@ -86,11 +86,13 @@ button {
   width: 100% !important;
 }
 
+/* muted text unterschriften */
 muted {
   color: dimgray;
   font-size: 90%;
 }
 
+/* footer halt */
 footer {
   bottom: 0;
   position: absolute;
@@ -98,12 +100,20 @@ footer {
   font-family: Consolas;
 }
 
+/* delete button bei edit */
 input.delete {
-  float: left;
   width: auto !important;
   background-color: #c52b2f;
+  float: left;
 }
+/* save bei edit */
 input.save-changes {
   float: right;
   width: 70% !important;
+}
+/* add-button */
+input.add-link{
+  background-color: #1db992;
+  color: black;
+  float: left;
 }

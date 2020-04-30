@@ -1,13 +1,12 @@
-//copy by Blu, Kau, Nikei
+//copy by Blu, Kau & Nikei
 
 const //imports
   express = require("express"),
   app = express(),
   fs = require("fs"),
-  crypto = require('crypto'),
   $ = require("node-global-storage"),
-       mySqlEasier= require("mysql-easier")
-
+  mySqlEasier = require("mysql-easier"),
+  shortid = require("shortid");
 
 app.use(express.static("public"));
 
@@ -17,9 +16,7 @@ const isUpload = req => {
 };
 
 const getType = req => {
-  if (
-    (req.headers["referer"] !== void 0 && req.protocol !== "https")
-  ) {
+  if (req.headers["referer"] !== void 0 && req.protocol !== "https") {
     return "upload";
   }
   return "visit";
@@ -55,9 +52,14 @@ app.set("trust proxy", true);
 
 // https://expressjs.com/en/starter/basic-routing.html
 app.get("/", (req, res) => {
-  res.write(fs.readFileSync(`${__dirname}/views/index.html`, "utf8")) &&
-    res.end();
+  res.write(
+    fs
+      .readFileSync(`${__dirname}/views/index.html`, "utf8")
+      .replace(/{{host}}/g, host)
+  ) && res.end();
 });
+
+const host = "https://pr0.link/";
 
 const log = req => {
   const _soos = +req.originalUrl.split("/")[1];
@@ -78,7 +80,7 @@ app.post("/welcome", (req, res) => {
   //  res.redirect(`https://${req.headers.host}${req.originalUrl}`);
   //}
   log(req);
-  res.json("yo")
+  res.json("yo");
 });
 
 //bongo
@@ -90,35 +92,9 @@ app.get("/*", (req, res, next) => {
   next();
 });
 
-//CONCEPT1
-// ->/x
-/*app.get("/test", (req, res) => {
-  res.redirect(isUpload(req) ? DB.TEST1.file : DB.TEST1.web);
-});
-
-//CONCEPT2
-//-> /soos?id=x
-app.get("/soos", (req, res) => {
-  const ID = req.query.id,
-    ENTRY = DB[ID];
-  ID && ENTRY
-    ? [res.redirect(isUpload(req) ? DB[ID].file : DB[ID].web)]
-    : res.status(404) && res.end();
-});
-
-//CONCEPT3
-//-> /soos/x
-app.get("/soos/:id", (req, res) => {
-  const ID = req.params.id,
-    ENTRY = DB[ID];
-  ID && ENTRY
-    ? [res.redirect(isUpload(req) ? DB[ID].file : DB[ID].web)]
-    : res.status(404) && res.end();
-});
-*/
 //CONCEPT4 ✓
 //-> /x
-app.get("/:id", (req, res) => {
+app.all("/:id", (req, res) => {
   const ID = req.params.id,
     ENTRY = DB[ID];
   ID && ENTRY
@@ -127,6 +103,7 @@ app.get("/:id", (req, res) => {
       res.write(
         fs
           .readFileSync(`${__dirname}/views/index.html`, "utf8")
+          .replace(/{{host}}/g, host)
           .replace("{{from}}", `/${isNaN(+ID) ? 204 : 404}`) //if path is number but not found, notify client about 404, else about invalid serverside path
       ) && res.end();
 });
@@ -135,6 +112,7 @@ app.get("/*", (req, res) => {
   res.write(
     fs
       .readFileSync(`${__dirname}/views/index.html`, "utf8")
+      .replace(/{{host}}/g, host)
       .replace("{{from}}", "/400") //how did we get here lol
   ) && res.end();
 });
@@ -142,16 +120,37 @@ app.get("/*", (req, res) => {
 //save post
 app.post("/", (req, res) => {
   console.log(req.query.token);
-  
+  res.redirect("/posted");
   //crypto.createHash('md5').update(link.web).digest("hex");
-  
 });
+
+
+const linkPool = $.set(
+    "linkPool",
+    mySqlEasier.createPool({
+      host: process.env.DB_CONTACT_HOST,
+      user: process.env.DB_CONTACT_USER,
+      password: process.env.DB_CONTACT_PASS,
+      database: process.env.DB_CONTACT_NAME
+    })
+  ),
+  getContacts = async () =>
+    new Promise(async (resolve, reject) => {
+      let dbusers;
+      const conn = await linkPool.getConnection();
+      conn.getAll("links").then(users => {
+        dbusers = links;
+        dbusers.sort((a, b) =>{
+          return a.name.length - b.name.length || a.localeCompare(b);
+        });
+        console.log("got links.");
+        return resolve(dblinks);
+      });
+      conn.done();
+    });
 
 app.patch("/", (req, res) => {
   console.log(req.query.token);
-  
-  //crypto.createHash('md5').update(link.web).digest("hex");
-  
 });
 
 // listen for requests :)
