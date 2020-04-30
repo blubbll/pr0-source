@@ -29,10 +29,8 @@ const app = {};
   };
 
   window.onload = () => {
-    
-
     {
-      fetch("/welcome", {method: "POST"})
+      fetch("/welcome", { method: "POST" });
       const path = getPath();
       console.debug("Coming from path", path);
       if ($(`view[path="/${location.href.split("/")[3]}"]`)) {
@@ -55,9 +53,16 @@ const app = {};
       if (app.path === href) return;
       console.debug("Navigating to path", href);
 
-      setActiveView(`/${href.split("/")[1]}`);
-      history.pushState(null, null, href);
-      app.path = href;
+      if ($(`view[path="${href}"]`)) {
+        setActiveView(`/${href.split("/")[1]}`);
+        history.pushState(null, null, href);
+        app.path = href;
+      } else {
+        console.warn("Couldn't navigate to path", href);
+
+        history.pushState(null, null, href);
+        location.reload(true);
+      }
 
       for (const _link of $$("#head-content navlink")) {
         _link.setAttribute(

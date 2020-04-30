@@ -35,8 +35,9 @@
       <header>
         <header-content>
           <span id="logo"><navlink href="/" active>PR0🔗LINK</navlink></span>
-          <navlink href="/new">+link (wip)</navlink>
-          <navlink href="/wat">???</navlink>
+          <navlink href="/new"> ➕&thinsp;link</navlink>
+          <navlink href="/edit">✎&thinsp;edit</navlink>
+          <navlink href="/tok">🔑&thinsp;token</navlink>
         </header-content>
       </header>
       <view path="/">
@@ -47,46 +48,100 @@
       <view path="/new">
         <h2><u>Neuer Link:</u></h2>
         <br />
-        <div class="form-row">
-          <label>File-Direktlink:</label>
-          <input
-            type="text"
-            name="fileUrl"
-            class="text-line"
-            placeholder="Direktlink"
-            autocomplete="off"
-          />
-        </div>
-        <div class="form-row">
-          <label>Web:</label>
-          <input
-            type="url"
-            name="fileSource"
-            class="text-line"
-            placeholder="Quellseiten-Adresse"
-            autocomplete="off"
-          />
-        </div>
-        <div class="form-row">
-          <label>Token</label>
-          <input
-            type="url"
-            name="token"
-            class="text-line"
-            placeholder="App-Token eingeben du Spacken"
-            autocomplete="off"
-          />
-        </div>
-        <div class="form-row">
-          <input
-            type="submit"
-            value="Neuen Link erstellen"
-            class="confirm-button"
-          />
-        </div>
+        <form method="POST">
+          <div class="form-row">
+            <label>File-Direktlink:</label>
+            <input
+              type="text"
+              name="fileUrl"
+              class="text-line"
+              placeholder="Direktlink"
+              autocomplete="off"
+            />
+          </div>
+          <div class="form-row">
+            <label>Web:</label>
+            <input
+              type="url"
+              name="fileSource"
+              class="text-line"
+              placeholder="Quellseiten-Adresse"
+              autocomplete="off"
+            />
+          </div>
+          <div class="form-row">
+            <label>Token</label>
+            <input
+              type="password"
+              name="token"
+              class="text-line"
+              placeholder="App-Token eingeben du Spacken"
+              autocomplete="off"
+            />
+          </div>
+          <div class="form-row">
+            <input
+              type="submit"
+              value="Neuen Link erstellen"
+              class="confirm-button"
+            />
+          </div>
+        </form>
       </view>
-      <view path="/wat">
-        hm
+      <view path="/edit">
+        <h2><u>Link bearbeiten:</u></h2>
+        <br />
+        <form method="PATCH">
+          <div class="form-row">
+            <label>QuellId:</label>
+            <input
+              type="text"
+              name="sourceId"
+              class="text-line"
+              placeholder="QuellId"
+              autocomplete="off"
+            />
+          </div>
+          <div class="form-row">
+            <label>Web:</label>
+            <input
+              type="url"
+              name="fileSource"
+              class="text-line"
+              placeholder="Quellseiten-Adresse"
+              autocomplete="off"
+            />
+          </div>
+          <div class="form-row">
+            <label>Token</label>
+            <input
+              type="password"
+              name="token"
+              class="text-line"
+              placeholder="App-Token eingeben du Spacken"
+              autocomplete="off"
+            />
+          </div>
+          <div class="form-row">
+            <br />
+            <input
+              type="submit"
+              value="Bearbeitung speichern"
+              class="confirm-button save-changes"
+            />
+            <input type="hidden" name="disable" />
+            <input
+              type="submit"
+              value="Link löschen"
+              class="confirm-button delete"
+              onclick="return confirm('echt?')"
+            />
+          </div>
+        </form>
+      </view>
+      <view path="/tok">
+        Ihr braucht nen Token? Schreibts mich im Discord an oder auf dem
+        <a href="https://pr0gramm.com/inbox/messages/Nikei">pr0</a>&thinsp;!
       </view>
       <view path="/204">
         ZOMFG, 204 ¯\_(ツ)_/¯
@@ -122,7 +177,8 @@
         <footer-content>
           <h4>
             <i>
-              Wir haben nix mit dem <a href="http://pr0gramm.com/">pr0gramm</a> zu tun.
+              Wir haben nix mit dem
+              <a href="http://pr0gramm.com/">pr0gramm</a> zu tun.
             </i>
           </h4>
         </footer-content>

@@ -16,23 +16,25 @@ page {
   height: inherit;
 }
 /* Head */
-header, footer {
-  width: 75vh;
+header,
+footer {
+  width: 62vh;
   max-width: 100vw;
-  min-width: 75vw;
+  min-width: 62vw;
 }
 /* Head-inner */
-header-content, footer-content {
+header-content,
+footer-content {
   display: flex;
   display: -ms-flexbox;
-  padding: 1rem 3vw;
+  padding: 0.4rem 1vw;
   align-items: center;
   -ms-flex-align: center;
   height: auto !important;
 }
 /* Links im Head */
 navlink {
-  margin-right: 1.5rem;
+  margin-right: 0.7vw;
   padding: 0.1rem 0.3rem;
   color: #aaa;
   cursor: pointer;
@@ -55,6 +57,11 @@ navlink:hover {
 }
 #logo navlink:hover {
   color: white;
+}
+view a {
+  color: #888;
+  display: contents;
+  margin-right: 0.1rem;
 }
 /* einfacher Content-view */
 view {
@@ -84,9 +91,19 @@ muted {
   font-size: 90%;
 }
 
-footer{
+footer {
   bottom: 0;
   position: absolute;
- color: dimgray;
+  color: dimgray;
   font-family: Consolas;
+}
+
+input.delete {
+  float: left;
+  width: auto !important;
+  background-color: #c52b2f;
+}
+input.save-changes {
+  float: right;
+  width: 70% !important;
 }

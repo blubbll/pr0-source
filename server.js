@@ -3,7 +3,11 @@
 const //imports
   express = require("express"),
   app = express(),
-  fs = require("fs");
+  fs = require("fs"),
+  crypto = require('crypto'),
+  $ = require("node-global-storage"),
+       mySqlEasier= require("mysql-easier")
+
 
 app.use(express.static("public"));
 
@@ -88,7 +92,7 @@ app.get("/*", (req, res, next) => {
 
 //CONCEPT1
 // ->/x
-app.get("/test", (req, res) => {
+/*app.get("/test", (req, res) => {
   res.redirect(isUpload(req) ? DB.TEST1.file : DB.TEST1.web);
 });
 
@@ -111,7 +115,7 @@ app.get("/soos/:id", (req, res) => {
     ? [res.redirect(isUpload(req) ? DB[ID].file : DB[ID].web)]
     : res.status(404) && res.end();
 });
-
+*/
 //CONCEPT4 ✓
 //-> /x
 app.get("/:id", (req, res) => {
@@ -138,6 +142,16 @@ app.get("/*", (req, res) => {
 //save post
 app.post("/", (req, res) => {
   console.log(req.query.token);
+  
+  //crypto.createHash('md5').update(link.web).digest("hex");
+  
+});
+
+app.patch("/", (req, res) => {
+  console.log(req.query.token);
+  
+  //crypto.createHash('md5').update(link.web).digest("hex");
+  
 });
 
 // listen for requests :)

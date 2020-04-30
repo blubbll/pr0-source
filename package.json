@@ -10,7 +10,10 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "crypto-js": "^3.3.0",
+    "node-global-storage": "^1.2.3",
+    "mysql-easier": "^2.1.0"
   },
   "engines": {
     "node": "12.x"
