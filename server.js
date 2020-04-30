@@ -14,7 +14,6 @@ const isUpload = req => {
 
 const getType = req => {
   if (
-    req.headers["cookie"] === undefined ||
     (req.headers["referer"] !== void 0 && req.protocol !== "https")
   ) {
     return "upload";
