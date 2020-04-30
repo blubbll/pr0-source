@@ -6,11 +6,12 @@ const //selectors
 console.clear();
 const app = {};
 {
-  const setActiveBlock = id => {
-    for (const _block of $$("block")) {
-      _block.setAttribute(
+  const setActiveView = id => {
+    console.debug("Setting active view to", 402)
+    for (const _view of $$("view")) {
+      _view.setAttribute(
         "active",
-        _block.getAttribute("id") === id ? true : false
+        _view.getAttribute("id") === id ? true : false
       );
     }
   };
@@ -36,18 +37,18 @@ const app = {};
       switch (href) {
         case "/":
           {
-            setActiveBlock("start");
+            setActiveView("start");
           }
           break;
         default: {
-          setActiveBlock(href.split("/")[1]);
+          setActiveView(href.split("/")[1]);
         }
       }
     });
   }
   //default / server->client routing
   setTimeout(() =>
-    setActiveBlock(
+    setActiveView(
       $("meta[name=from]")
         .getAttribute("value")
         .replace("{{from}}", "") ||

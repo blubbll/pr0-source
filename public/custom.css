@@ -25,14 +25,14 @@ body {
 #head-content {
   display: flex;
   display: -ms-flexbox;
-  padding: 1vh 5vw;
+  padding: 1rem 3vw;
   align-items: center;
   -ms-flex-align: center;
   height: auto !important;
 }
 /* Links im Head */
 #head-content navlink {
-  margin-right: 1.5rem;
+  margin-right: 3rem;
   color: #aaa;
   cursor: pointer;
   user-select: none;
@@ -45,7 +45,7 @@ body {
 }
 /* Logo halt */
 #logo {
-  font-size: 2.5vh;
+  font-size: 1.5rem;
   margin-right: 2rem;
 }
 #logo navlink {
@@ -54,17 +54,19 @@ body {
 #logo navlink:hover {
   color: white;
 }
-/* einfacher Content-block */
-block {
+/* einfacher Content-view */
+view {
   display: none;
   width: 50vh;
   max-width: 75vw;
   min-width: 30vw;
   flex-direction: column;
   -ms-flex-direction: column;
+  font-size: 1.4rem;
+
 }
 
-block[active="true"] {
+view[active="true"] {
   display: flex !important;
 }
 
@@ -72,9 +74,4 @@ block[active="true"] {
 input,
 button {
   width: 100% !important;
-}
-
-/* 404 area */
-block[id="404"]{
-  font-size: 2rem;
 }

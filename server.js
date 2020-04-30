@@ -91,7 +91,7 @@ app.get("/:id", (req, res) => {
       res.write(
         fs
           .readFileSync(`${__dirname}/views/index.html`, "utf8")
-          .replace("{{from}}", isNaN(+ID) ? req.originalUrl : 404) //if path is number but not found, notify client about 404, else about serverside path
+          .replace("{{from}}", isNaN(+ID) ? 204 : 404) //if path is number but not found, notify client about 404, else about invalid serverside path
       ) && res.end();
 });
 

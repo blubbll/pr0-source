@@ -14,16 +14,12 @@
       href="https://cdn.glitch.com/bc9f669d-cc9f-4a65-88ee-6da1ff7d4ef0%2Flink_1f517.png?v=1588187945326"
       type="image/png"
     />
-
-    <link rel="stylesheet" href="https://pr0gramm.com/media/pr0gramm.min.css" />
-
+    <link rel="stylesheet" href="./pr0.css" />
+    <!-- server-> client path messaging -->
     <meta name="from" value="{{from}}" />
-
-    <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css" />
-
-    <!-- import the webpage's client-side javascript file -->
-    <script src="/script.js" defer></script>
+    <!-- assets -->
+    <link rel="stylesheet" href="./custom.css" />
+    <script src="/custom.js" defer></script>
   </head>
   <body>
     <div id="page">
@@ -34,11 +30,11 @@
           <navlink href="/wat">???</navlink>
         </div>
       </div>
-      <block id="start">
+      <view id="start">
         Nutzerverwaltete sources halt. Cool oder?<br />
         #hanloMarina
-      </block>
-      <block id="new">
+      </view>
+      <view id="new">
         <h2>Neuer Link</h2>
         <div class="form-row">
           <label>File-Direktlink:</label>
@@ -77,13 +73,16 @@
             class="confirm settings-save"
           />
         </div>
-      </block>
-      <block id="wat">
+      </view>
+      <view id="wat">
         hm
-      </block>
-      <block id="404">
-        ZOMFG, 404 ¯\_(ツ)_/¯
-      </block>
+      </view>
+      <view id="204">
+        ZOMFG, 204 ¯\_(ツ)_/¯
+      </view>
+      <view id="404">
+        NICHTS GEFUNDEN ¯\_(ツ)_/¯
+      </view>
     </div>
   </body>
 </html>
