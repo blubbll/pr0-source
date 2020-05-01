@@ -68,7 +68,7 @@ const app = {};
       });
     return false; //form
   };
-  
+
   app.add = () => {
     fetch(location.href, {
       body: JSON.stringify({
@@ -84,12 +84,11 @@ const app = {};
       .then(res => res.json())
       .then(json => {
         if (json.status === "ok") {
-          alert(json.msg);
+          prompt(json.msg, `http://${location.host}/${json.data}`);
         } else alert(json.msg);
       });
     return false; //form
   };
-
 
   app.checkDelete = () => {
     if (confirm("echt?")) {

@@ -70,30 +70,38 @@ app.post("/welcome", (req, res) => {
   res.json("yo");
 });
 
+class SOOS {
+  constructor(obj) {
+    this.web = obj.web || "";
+    (this.file = obj.file || ""),
+      (this.active = obj.active || true),
+      (this.token = obj.token || ""),
+      (this.sid = Math.floor(new Date().valueOf() * Math.random()));
+  }
+}
+
 //save post
 app.post("/add", async (req, res) => {
-
   const reqToken = await tokenResolve(req.body.token);
   if (reqToken) {
-    const SOOS = await getSourceDupe(req.body.file);
-    if (!SOOS) {
- 
-        const conn = await sourcePool.getConnection(),
-          _new = await conn.insert(process.env.DB_SOURCES_TABL, {
-            web: req.body.web,
-            file: req.body.file,
-            token: reqToken,
-            sid: shortid.generate()
-          }),
-          __ = conn.done();
+    const existing = await getSourceDupe(req.body.file);
+    if (!existing) {
+      const _NEW = new SOOS({
+        web: req.body.web,
+        file: req.body.file,
+        token: reqToken
+      });
 
-        console.log(_new)
-      
-        $.set(`SOOS_${_new}`, _new);
-        res.json({ status: "ok", msg: "Soße hinzugefügt!" });
-      } else
-        res.json({ status: "nok", msg: "Quelldatei bereits eingefügt." });
-    
+      while (await getSource(_NEW.sid))
+        _NEW.sid = Math.floor(new Date().valueOf() * Math.random());
+
+      const conn = await sourcePool.getConnection(),
+        _ = await conn.insert(process.env.DB_SOURCES_TABL, _NEW),
+        __ = await conn.done();
+
+      $.set(`SOOS_${_NEW.sid}`, _NEW);
+      res.json({ status: "ok", msg: "Soße hinzugefügt!", data: _NEW.sid });
+    } else res.json({ status: "nok", msg: "Quelldatei bereits eingefügt." });
   } else res.json({ status: "nok", msg: "inkorrektes token." });
 });
 
@@ -150,11 +158,12 @@ app.all("/:id", async (req, res) => {
 
   if (isSelf(req)) {
     return res.json(
-      SOOS && SOOS.disabled !== [1]
+      SOOS && SOOS.active !== [1]
         ? { status: "ok", url: SOOS.web }
         : { status: "nok" }
     );
   }
+
   ID && SOOS && SOOS.active[0]
     ? [res.redirect(isUpload(req) ? SOOS.file : SOOS.web)] //link found, redirect to link
     : //entry not found, check if path is number...
@@ -223,6 +232,7 @@ const tokenBelong = async (token, soos) => {
 };
 
 const getSource = async id => {
+  if (!id) return void 0;
   const conn = await sourcePool.getConnection(),
     data = await conn.query(
       `select * from ${process.env.DB_SOURCES_TABL} where sid = "${id}"`
