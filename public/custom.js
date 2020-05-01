@@ -10,6 +10,8 @@ const app = {};
   //set active view
   const setActiveView = path => {
     console.debug("active view was set to", path);
+    
+    document.title = `${app.otitle}${path}` 
 
     for (const _view of $$("view")) {
       _view.setAttribute(
@@ -142,6 +144,7 @@ const app = {};
 
   window.onload = () => {
     {
+      app.otitle = document.title;
       fetch("/welcome", { method: "POST" });
       const path = getPath();
       console.debug("Coming from path", path);
