@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="./pr0.css" />
     <!-- server-> client path messaging -->
     <meta name="from" value="{{from}}" />
-    <meta name="msg" value="{{msg}}"/>
+    <meta name="msg" value="{{msg}}" />
     <!-- assets -->
     <link rel="stylesheet" href="./custom.css" />
     <script src="./custom.js" defer></script>
@@ -115,18 +115,19 @@
             <label>Soßen-ID:</label>
             <input
               type="search"
-              name="editId"
+              name="id"
+              required
               class="text-line"
               placeholder="id"
               autocomplete="off"
-              onchange="this.value=this.value.split('/')[3]"
+              onchange="this.value.includes('//') && [this.value=this.value.split('/')[3]]"
             />
           </div>
           <div class="form-row">
             <label>Web:</label>
             <input
               type="url"
-              name="webSource"
+              name="web"
               class="text-line"
               placeholder="Quellseiten-Adresse"
               autocomplete="off"
@@ -135,6 +136,7 @@
           <div class="form-row">
             <br />
             <input type="hidden" name="disable" />
+            <input type="hidden" name="appToken" />
             <input
               type="submit"
               value="S0ße löschen"

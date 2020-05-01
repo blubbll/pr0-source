@@ -24,7 +24,14 @@ const getType = req => {
   return "visit";
 };
 
+//try to get real ip
 app.set("trust proxy", true);
+
+// Parse URL-encoded bodies (as sent by HTML forms)
+app.use(express.urlencoded({extended: true}));
+
+// Parse JSON bodies (as sent by API clients)
+app.use(express.json());
 
 // https://expressjs.com/en/starter/basic-routing.html
 app.get("/", (req, res) => {
@@ -61,8 +68,17 @@ app.post("/welcome", (req, res) => {
 
 //save post
 app.post("/edit", (req, res) => {
+  
+  const ID = req.body;
+  const disable = req.body.disable === "1";
+  
+  if(ID)
+  if(disable){
+    
+  }
+  
   const ee = 1;
-  const msg = btoa(`Datensatz ${ee} erfolgreich bearbeitet kek`);
+  const msg = btoa(`Soße ${ee} erfolgreich bearbeitet kek`).replace(/\//g, "°");
   res.redirect(`/msg:${msg}`);
   res.end();
   //crypto.createHash('md5').update(link.web).digest("hex");
@@ -72,7 +88,7 @@ app.get("/msg*", (req, res) => {
   res.write(
     fs
       .readFileSync(`${__dirname}/views/index.html`, "utf8")
-      .replace(/{{msg}}/g, atob(decodeURIComponent(req.originalUrl).split(":")[1]))
+      .replace(/{{msg}}/g, atob(decodeURIComponent(req.originalUrl).split(":")[1].replace(/°/g, "/")))
   );
 
   res.end();
