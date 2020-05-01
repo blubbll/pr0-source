@@ -66,30 +66,36 @@ const log = req => {
 };
 
 app.post("/welcome", (req, res) => {
-  //if(getType(req) === "visit" && isNaN(+req.originalUrl) && req.headers["cf-visitor"] && JSON.parse(req.headers["cf-visitor"]).scheme === "http"){ //upgrade cf directs
-  //  res.redirect(`https://${req.headers.host}${req.originalUrl}`);
-  //}
   log(req);
   res.json("yo");
 });
 
 //save post
-app.patch("/edit", (req, res) => {
-  const ID = req.body;
+app.patch("/edit", async (req, res) => {
+  const ID = req.body.id;
+  const reqToken = await tokenResolve(req.body.token);
+  if (reqToken) {
+    const SOOS = $.get(`SOOS_${ID}`) || (await getSource(ID));
+    if (SOOS) {
+      if (await tokenBelong(reqToken, SOOS)) {
+        SOOS.active = true;
+        SOOS.web = req.body.web;
+        const conn = await sourcePool.getConnection(),
+          _ = conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
+          __ = conn.done();
 
-  console.log(ID);
-
-  if (ID) {
-  }
-
-  res.end();
+        $.set(`SOOS_${ID}`, SOOS);
+        res.json({ status: "ok", msg: "Soße aktualisiert!" });
+      } else
+        res.json({ status: "nok", msg: "Token & Soße passen nicht zusammen" });
+    } else res.json({ status: "nok", msg: "soße nicht gefunden" });
+  } else res.json({ status: "nok", msg: "inkorrektes token" });
 });
 
 //delete id
 app.delete("/edit", async (req, res) => {
   const ID = req.body.id;
-
-  const reqToken = await tokenGet(req.body.token);
+  const reqToken = await tokenResolve(req.body.token);
   if (reqToken) {
     const SOOS = $.get(`SOOS_${ID}`) || (await getSource(ID));
     if (SOOS) {
@@ -99,13 +105,11 @@ app.delete("/edit", async (req, res) => {
           _ = conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
           __ = conn.done();
         $.set(`SOOS_${ID}`, SOOS);
+        res.json({ status: "ok", msg: "Soße deaktiviert!" });
       } else
-        res.json({ status: "nok", msg: "Token & Soße passen nicht zusammen" });
-    } else res.json({ status: "nok", msg: "soße nicht gefunden" });
-  } else res.json({ status: "nok", msg: "inkorrektes token" });
-
-  //$.set(`SOOS_${ID}`, await getSource(ID)
-
+        res.json({ status: "nok", msg: "Token & Soße passen nicht zusammen." });
+    } else res.json({ status: "nok", msg: "soße nicht gefunden." });
+  } else res.json({ status: "nok", msg: "Inkorrektes token." });
   res.end();
 });
 
@@ -124,8 +128,7 @@ app.all("/:id", async (req, res) => {
         : { status: "nok" }
     );
   }
-
-  ID && SOOS
+  ID && SOOS && SOOS.active[0]
     ? [res.redirect(isUpload(req) ? SOOS.file : SOOS.web)] //link found, redirect to link
     : //entry not found, check if path is number...
       res.write(
@@ -171,14 +174,14 @@ const sourcePool = $.set(
       conn.done();
     });
 
-//is app toke nvalid
-const tokenGet = async token => {
+//resolve token to ID
+const tokenResolve = async token => {
   const conn = await sourcePool.getConnection(),
     data = await conn.query(
       `select * from ${process.env.DB_TOKENS_TABL} where token = "${token}"`
     ),
     _ = conn.done();
-  return data.length ? data[0].token : void 0;
+  return data.length ? data[0].id : void 0;
 };
 
 //does a token belong to src
@@ -204,7 +207,7 @@ const getSource = async id => {
 
 (async () => {
   //console.log((await getSource("1588182495145")).active[0] === 1);
-  console.log((await getSource("1588182495145")).token);
+  //console.log((await getSource("1588182495145")).token);
 })();
 
 const tokenPool = $.set(

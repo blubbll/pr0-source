@@ -17,6 +17,21 @@ const app = {};
         _view.getAttribute("path") === path ? true : false
       );
     }
+
+    switch (path) {
+      case "/add":
+        {
+          $("input[name=addDirect]").value = "";
+          $("input[name=addWeb]").value = "";
+        }
+        break;
+      case "/edit":
+        {
+          $("input[name=editID]").value = "";
+          $("input[name=editWeb]").value = "";
+        }
+        break;
+    }
   };
 
   //get app id on fetchy
@@ -29,7 +44,7 @@ const app = {};
       .then(json => {
         $("input[name=editWeb]").disabled = false;
         $("input[name=editWeb]").focus();
-        $("input[name=editWeb]").value = json.url;
+        $("input[name=editWeb]").value = json.url || "";
       });
   };
 
@@ -37,7 +52,8 @@ const app = {};
     fetch(location.href, {
       body: JSON.stringify({
         id: $("input[name=editID]").value,
-        token: $("input[name=editWeb]")
+        token: $("input[name=appToken]").value,
+        web: $("input[name=editWeb]").value
       }),
       headers: {
         "CONTENT-TYPE": "application/json" //wichtig lol
@@ -46,7 +62,9 @@ const app = {};
     })
       .then(res => res.json())
       .then(json => {
-        console.log(json);
+        if (json.status === "ok") {
+          alert(json.msg);
+        } else alert(json.msg);
       });
     return false; //form
   };
@@ -58,14 +76,16 @@ const app = {};
           id: $("input[name=editID]").value,
           token: $("input[name=appToken]").value
         }),
-              headers: {
-        "CONTENT-TYPE": "application/json" //wichtig lol
-      },
+        headers: {
+          "CONTENT-TYPE": "application/json" //wichtig lol
+        },
         method: "DELETE"
       })
         .then(res => res.json())
         .then(json => {
-          console.log(json);
+          if (json.status === "ok") {
+            alert(json.msg);
+          } else alert(json.msg);
         });
     }
     return false; //form
