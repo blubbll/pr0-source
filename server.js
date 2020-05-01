@@ -41,6 +41,7 @@ const getType = req => {
   ) {
     return "upload";
   }
+  if(+req.originalUrl.split("/")[1]) return "source_click"
   return "visit";
 };
 
@@ -69,6 +70,7 @@ const log = req => {
 
   console.debug({
     proto: JSON.parse(req.headers["cf-visitor"]).scheme,
+    ua: req.get('User-Agent'),
     type: getType(req),
     IP: req.headers["cf-connecting-ip"]
       ? req.headers["cf-connecting-ip"]
@@ -121,7 +123,7 @@ app.post("/add", async (req, res) => {
         });
       } else res.json({ status: "nok", msg: "Quelldatei bereits eingefügt." });
     } else res.json({ status: "nok", msg: "Quelldatei darf nicht leer sein." });
-  } else res.json({ status: "nok", msg: "Inkorrektes token." });
+  } else res.json({ status: "nok", msg: "Inkorrektes Token." });
 });
 
 //save post
