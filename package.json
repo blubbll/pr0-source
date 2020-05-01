@@ -15,7 +15,8 @@
     "mysql-easier": "^2.1.0",
     "shortid": "^2.2.15",
     "atob": "^2.1.2",
-    "btoa": "^1.2.1"
+    "btoa": "^1.2.1",
+    "sqlstring": "^2.3.2"
   },
   "engines": {
     "node": "12.x"

@@ -8,9 +8,19 @@ const //imports
   mySqlEasier = require("mysql-easier"),
   shortid = require("shortid"),
   atob = require("atob"),
-  btoa = require("btoa");
+  btoa = require("btoa"),
+  sqlstring = require("sqlstring");
 
 app.use(express.static("public"));
+
+const mysqape = input => {
+  if (!isNaN(input)) return sqlstring.escape(input);
+  else
+    return sqlstring
+      .escape(input)
+      .substring(1)
+      .slice(0, -1);
+};
 
 //UPLOADING
 const isUpload = req => {
@@ -221,7 +231,9 @@ const sourcePool = $.set(
 const tokenResolve = async token => {
   const conn = await sourcePool.getConnection(),
     data = await conn.query(
-      `select * from ${process.env.DB_TOKENS_TABL} where token = "${token}"`
+      `select * from ${process.env.DB_TOKENS_TABL} where token = "${mysqape(
+        token
+      )}";`
     ),
     _ = conn.done();
   return data.length ? data[0].id : void 0;
@@ -231,7 +243,9 @@ const tokenResolve = async token => {
 const tokenBelong = async (token, soos) => {
   const conn = await sourcePool.getConnection(),
     data = await conn.query(
-      `select * from ${process.env.DB_SOURCES_TABL} where id = "${soos.id}" AND token = "${token}"`
+      `select * from ${process.env.DB_SOURCES_TABL} where id = ${
+        soos.id
+      } AND token = "${mysqape(token)}";`
     ),
     _ = conn.done();
   if (data.length) return true;
@@ -242,7 +256,7 @@ const getSource = async id => {
   if (!id) return void 0;
   const conn = await sourcePool.getConnection(),
     data = await conn.query(
-      `select * from ${process.env.DB_SOURCES_TABL} where sid = "${id}"`
+      `select * from ${process.env.DB_SOURCES_TABL} where sid = ${mysqape(id)};`
     ),
     _ = conn.done();
   if (data.length) return data[0];
@@ -252,7 +266,9 @@ const getSource = async id => {
 const getSourceDupe = async direct => {
   const conn = await sourcePool.getConnection(),
     data = await conn.query(
-      `select * from ${process.env.DB_SOURCES_TABL} where file = "${direct}"`
+      `select * from ${process.env.DB_SOURCES_TABL} where file = "${mysqape(
+        direct
+      )}"`
     ),
     _ = conn.done();
   if (data.length) return data[0];
