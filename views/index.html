@@ -110,34 +110,34 @@
       <view path="/edit">
         <h2><u>Link bearbeiten:</u></h2>
         <br />
-        <form method="POST">
+        <form onsubmit="return app.edit();">
           <div class="form-row">
             <label>Soßen-ID:</label>
             <input
               type="search"
-              name="id"
+              name="editID"
               required
               class="text-line"
               placeholder="id"
               autocomplete="off"
-              onchange="this.value.includes('//') && [this.value=this.value.split('/')[3]]"
+              onchange="app.gedit(this);"
             />
           </div>
           <div class="form-row">
             <label>Web:</label>
             <input
               type="url"
-              name="web"
+              name="editWeb"
               class="text-line"
               placeholder="Quellseiten-Adresse"
+                   disabled
               autocomplete="off"
             />
           </div>
           <div class="form-row">
             <br />
-            <input type="hidden" name="disable" />
-            <input type="hidden" name="appToken" />
             <input
+                   tabindex="-1"
               type="submit"
               value="S0ße löschen"
               class="confirm-button delete"
@@ -158,7 +158,7 @@
           <form onsubmit="return false">
             <input
               type="password"
-              name="setToken"
+              name="appToken"
               class="text-line"
               placeholder="App-T0ken(LastPass empfohlen)"
               autocomplete="off"
@@ -224,6 +224,10 @@
               <a href="http://pr0gramm.com/">pr0gramm</a> zu tun.
             </i>
           </h4>
+          <br/>
+          <h5>
+            ©by Blu, Kau & Nikei
+          </h5>
         </footer-content>
       </footer>
     </page>

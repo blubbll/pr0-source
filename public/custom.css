@@ -26,6 +26,10 @@ footer a{
   text-decoration: underline;
 }
 /* Head-inner */
+footer-content{
+  flex-direction: column;
+  -ms-flex-direction: column;
+}
 header-content,
 footer-content {
   display: flex;
@@ -131,4 +135,9 @@ input.add-link{
   background-color: #1db992;
   color: black;
   float: left;
+}
+
+/* override */
+input[name=editWeb]{
+  cursor: text
 }

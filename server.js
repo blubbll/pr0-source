@@ -16,8 +16,15 @@ app.use(express.static("public"));
 const isUpload = req => {
   return getType(req) === "upload";
 };
+//SELFINFO
+const isSelf = req => {
+  return getType(req) === "self";
+};
 
 const getType = req => {
+  if (req.headers["self"] !== void 0 && req.headers["self"] == "true") {
+    return "self";
+  }
   if (req.headers["referer"] !== void 0 && req.protocol !== "https") {
     return "upload";
   }
@@ -28,10 +35,10 @@ const getType = req => {
 app.set("trust proxy", true);
 
 // Parse URL-encoded bodies (as sent by HTML forms)
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 // Parse JSON bodies (as sent by API clients)
-app.use(express.json());
+app.use(express.json({ extended: true }));
 
 // https://expressjs.com/en/starter/basic-routing.html
 app.get("/", (req, res) => {
@@ -67,32 +74,39 @@ app.post("/welcome", (req, res) => {
 });
 
 //save post
-app.post("/edit", (req, res) => {
-  
+app.patch("/edit", (req, res) => {
   const ID = req.body;
-  const disable = req.body.disable === "1";
-  
-  if(ID)
-  if(disable){
-    
+
+  console.log(ID);
+
+  if (ID) {
   }
-  
-  const ee = 1;
-  const msg = btoa(`Soße ${ee} erfolgreich bearbeitet kek`).replace(/\//g, "°");
-  res.redirect(`/msg:${msg}`);
+
   res.end();
-  //crypto.createHash('md5').update(link.web).digest("hex");
 });
 
-app.get("/msg*", (req, res) => {
-  res.write(
-    fs
-      .readFileSync(`${__dirname}/views/index.html`, "utf8")
-      .replace(/{{msg}}/g, atob(decodeURIComponent(req.originalUrl).split(":")[1].replace(/°/g, "/")))
-  );
+//delete id
+app.delete("/edit", async (req, res) => {
+  const ID = req.body.id;
+
+  const reqToken = await tokenGet(req.body.token);
+  if (reqToken) {
+    const SOOS = $.get(`SOOS_${ID}`) || (await getSource(ID));
+    if (SOOS) {
+      if (await tokenBelong(reqToken, SOOS)) {
+        SOOS.active = false;
+        const conn = await sourcePool.getConnection(),
+          _ = conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
+          __ = conn.done();
+        $.set(`SOOS_${ID}`, SOOS);
+      } else
+        res.json({ status: "nok", msg: "Token & Soße passen nicht zusammen" });
+    } else res.json({ status: "nok", msg: "soße nicht gefunden" });
+  } else res.json({ status: "nok", msg: "inkorrektes token" });
+
+  //$.set(`SOOS_${ID}`, await getSource(ID)
 
   res.end();
-  //crypto.createHash('md5').update(link.web).digest("hex");
 });
 
 //CONCEPT4 ✓
@@ -102,6 +116,15 @@ app.all("/:id", async (req, res) => {
 
   let SOOS = $.get(`SOOS_${ID}`);
   if (ID && !SOOS) SOOS = $.set(`SOOS_${ID}`, await getSource(ID));
+
+  if (isSelf(req)) {
+    return res.json(
+      SOOS && SOOS.disabled !== [1]
+        ? { status: "ok", url: SOOS.web }
+        : { status: "nok" }
+    );
+  }
+
   ID && SOOS
     ? [res.redirect(isUpload(req) ? SOOS.file : SOOS.web)] //link found, redirect to link
     : //entry not found, check if path is number...
@@ -148,19 +171,40 @@ const sourcePool = $.set(
       conn.done();
     });
 
-const getSource = async id => {
-  const conn = await sourcePool.getConnection();
+//is app toke nvalid
+const tokenGet = async token => {
+  const conn = await sourcePool.getConnection(),
+    data = await conn.query(
+      `select * from ${process.env.DB_TOKENS_TABL} where token = "${token}"`
+    ),
+    _ = conn.done();
+  return data.length ? data[0].token : void 0;
+};
 
-  const source = await conn.query(
-    `select * from ${process.env.DB_SOURCES_TABL} where sid = ${id}`
-  );
-  conn.done();
-  if (source.length) return source[0];
+//does a token belong to src
+const tokenBelong = async (token, soos) => {
+  const conn = await sourcePool.getConnection(),
+    data = await conn.query(
+      `select * from ${process.env.DB_SOURCES_TABL} where id = "${soos.id}" AND token = "${token}"`
+    ),
+    _ = conn.done();
+  if (data.length) return true;
+  else return false;
+};
+
+const getSource = async id => {
+  const conn = await sourcePool.getConnection(),
+    data = await conn.query(
+      `select * from ${process.env.DB_SOURCES_TABL} where sid = "${id}"`
+    ),
+    _ = conn.done();
+  if (data.length) return data[0];
   else return void 0;
 };
 
 (async () => {
-  console.log((await getSource("1588182495145")).active[0] === 1);
+  //console.log((await getSource("1588182495145")).active[0] === 1);
+  console.log((await getSource("1588182495145")).token);
 })();
 
 const tokenPool = $.set(

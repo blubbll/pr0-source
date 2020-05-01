@@ -19,15 +19,62 @@ const app = {};
     }
   };
 
+  //get app id on fetchy
+  app.gedit = elem => {
+    const fill = url => {};
+    //fix domain to id
+    if (elem.value.includes("//")) elem.value = elem.value.split("/")[3];
+    const f = fetch(`/${elem.value}`, { headers: { self: true } })
+      .then(res => res.json())
+      .then(json => {
+        $("input[name=editWeb]").disabled = false;
+        $("input[name=editWeb]").focus();
+        $("input[name=editWeb]").value = json.url;
+      });
+  };
+
+  app.edit = () => {
+    fetch(location.href, {
+      body: JSON.stringify({
+        id: $("input[name=editID]").value,
+        token: $("input[name=editWeb]")
+      }),
+      headers: {
+        "CONTENT-TYPE": "application/json" //wichtig lol
+      },
+      method: "PATCH"
+    })
+      .then(res => res.json())
+      .then(json => {
+        console.log(json);
+      });
+    return false; //form
+  };
+
   app.checkDelete = () => {
-    if (confirm("echt?")) $("input[name=disable]").value = 1;
-    return false;
+    if (confirm("echt?")) {
+      fetch(location.href, {
+        body: JSON.stringify({
+          id: $("input[name=editID]").value,
+          token: $("input[name=appToken]").value
+        }),
+              headers: {
+        "CONTENT-TYPE": "application/json" //wichtig lol
+      },
+        method: "DELETE"
+      })
+        .then(res => res.json())
+        .then(json => {
+          console.log(json);
+        });
+    }
+    return false; //form
   };
 
   //update token
   app.updateToken = () => {
-    localStorage.setItem("token", $("input[name=setToken]").value);
-    location.reload(true);
+    localStorage.setItem("token", $("input[name=appToken]").value);
+    alert("token changed");
   };
 
   //sync activ enav link
@@ -63,16 +110,12 @@ const app = {};
       syncNavlinks(path);
 
       //sync setToken
-      $("input[name=setToken]").value = localStorage.getItem("token");
-      //sync hiddenTokens
-      for (const hf of $$("input[type=hidden]")) {
-        hf.value = localStorage.getItem("token");
-      }
-      //reset values
-      $("input[name=disable]").value = "";
+      $("input[name=appToken]").value = localStorage.getItem("token");
 
       if (path === "/msg" && location.href.includes("/msg:")) {
-        $("view[path='/msg']").innerText = $("meta[name=msg]").getAttribute("value")
+        $("view[path='/msg']").innerText = $("meta[name=msg]").getAttribute(
+          "value"
+        );
       }
     }
   };
