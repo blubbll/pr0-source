@@ -49,7 +49,7 @@ app.get("/", (req, res) => {
   ) && res.end();
 });
 
-const host = "https://pr0.link/";
+const host = "https://s0ße.link/";
 
 const log = req => {
   const _soos = +req.originalUrl.split("/")[1];

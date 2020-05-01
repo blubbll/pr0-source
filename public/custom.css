@@ -33,6 +33,11 @@ footer-content {
   height: auto !important;
 }
 /* Links im Head */
+navlink svg{
+  fill: #aaa;
+  height: 12px;
+  width: 12px;
+}
 navlink {
   margin-right: 1.2vw;
   padding: 0.1rem 0.3rem;
@@ -40,8 +45,9 @@ navlink {
   cursor: pointer;
   user-select: none;
 }
-navlink[active="true"] {
+navlink[active="true"], navlink[active="true"] svg {
   color: white!important;
+  fill: white!important;
 }
 navlink:hover {
   color: white;
@@ -52,11 +58,17 @@ navlink:hover {
   margin: 0 1vw;
   font-family: Consolas;
 }
-#logo navlink {
-  color: lightgray;
+#logo svg{
+  width: 18px;
+  height: 18px;
 }
-#logo navlink:hover {
+#logo navlink, #logo navlink svg {
+  color: lightgray;
+  fill: lightgray;
+}
+#logo navlink:hover, #logo navlink:hover svg {
   color: white;
+  /*fill: white!important; /* it's important kek */
 }
 view a {
   color: #888;
