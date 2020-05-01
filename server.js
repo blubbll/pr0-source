@@ -71,6 +71,33 @@ app.post("/welcome", (req, res) => {
 });
 
 //save post
+app.post("/add", async (req, res) => {
+
+  const reqToken = await tokenResolve(req.body.token);
+  if (reqToken) {
+    const SOOS = await getSourceDupe(req.body.file);
+    if (!SOOS) {
+ 
+        const conn = await sourcePool.getConnection(),
+          _new = await conn.insert(process.env.DB_SOURCES_TABL, {
+            web: req.body.web,
+            file: req.body.file,
+            token: reqToken,
+            sid: shortid.generate()
+          }),
+          __ = conn.done();
+
+        console.log(_new)
+      
+        $.set(`SOOS_${_new}`, _new);
+        res.json({ status: "ok", msg: "Soße hinzugefügt!" });
+      } else
+        res.json({ status: "nok", msg: "Quelldatei bereits eingefügt." });
+    
+  } else res.json({ status: "nok", msg: "inkorrektes token." });
+});
+
+//save post
 app.patch("/edit", async (req, res) => {
   const ID = req.body.id;
   const reqToken = await tokenResolve(req.body.token);
@@ -199,6 +226,16 @@ const getSource = async id => {
   const conn = await sourcePool.getConnection(),
     data = await conn.query(
       `select * from ${process.env.DB_SOURCES_TABL} where sid = "${id}"`
+    ),
+    _ = conn.done();
+  if (data.length) return data[0];
+  else return void 0;
+};
+
+const getSourceDupe = async direct => {
+  const conn = await sourcePool.getConnection(),
+    data = await conn.query(
+      `select * from ${process.env.DB_SOURCES_TABL} where file = "${direct}"`
     ),
     _ = conn.done();
   if (data.length) return data[0];

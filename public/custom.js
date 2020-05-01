@@ -68,6 +68,28 @@ const app = {};
       });
     return false; //form
   };
+  
+  app.add = () => {
+    fetch(location.href, {
+      body: JSON.stringify({
+        token: $("input[name=appToken]").value,
+        file: $("input[name=addDirect]").value,
+        web: $("input[name=addWeb]").value
+      }),
+      headers: {
+        "CONTENT-TYPE": "application/json" //wichtig lol
+      },
+      method: "POST"
+    })
+      .then(res => res.json())
+      .then(json => {
+        if (json.status === "ok") {
+          alert(json.msg);
+        } else alert(json.msg);
+      });
+    return false; //form
+  };
+
 
   app.checkDelete = () => {
     if (confirm("echt?")) {
