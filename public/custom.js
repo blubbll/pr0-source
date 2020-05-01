@@ -31,7 +31,7 @@ const app = {};
         {
           $("input[name=editID]").value = "";
           $("input[name=editWeb]").value = "";
-          $("input[name=editWeb]").disabled = false;
+          $("input[name=editWeb]").disabled = true;
         }
         break;
     }
@@ -66,9 +66,14 @@ const app = {};
     const f = fetch(`/${elem.value}`, { headers: { self: true } })
       .then(res => res.json())
       .then(json => {
-        $("input[name=editWeb]").disabled = false;
-        $("input[name=editWeb]").focus();
-        $("input[name=editWeb]").value = json.url || "";
+        if (json.status === "ok") {
+          $("input[name=editWeb]").disabled = false;
+          $("input[name=editWeb]").focus();
+          $("input[name=editWeb]").value = json.url || "";
+        } else {
+          alert(json.msg);
+          $("input[name=editID]").focus() && $("input[name=editID]").select();
+        }
       });
   };
 

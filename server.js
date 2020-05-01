@@ -183,7 +183,7 @@ app.all("/:id", async (req, res) => {
     return res.json(
       SOOS && SOOS.active !== [1]
         ? { status: "ok", url: SOOS.web }
-        : { status: "nok" }
+        : { status: "nok", msg: `soße ${ID} nicht gefunden.` }
     );
   }
 
