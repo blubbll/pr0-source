@@ -7,4 +7,4 @@ Kleines Proof-of-Concept, welches einem bei der Angabe bei Soßen hilft.
 - einfache Oberfläche mit großer Wirkung.
 - Freiheit
 
-[https://s0ße.link](https://sosse.link)
+[https://s0ße.link](https://s0sse.link)
