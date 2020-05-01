@@ -10,8 +10,8 @@ const app = {};
   //set active view
   const setActiveView = path => {
     console.debug("active view was set to", path);
-    
-    document.title = `${app.otitle}${path}` 
+
+    document.title = `${app.otitle} ${path}`; //hairspace
 
     for (const _view of $$("view")) {
       _view.setAttribute(

@@ -97,29 +97,31 @@ class SOOS {
 app.post("/add", async (req, res) => {
   const reqToken = await tokenResolve(req.body.token);
   if (reqToken) {
-    const existing = await getSourceDupe(req.body.file);
-    if (!existing) {
-      const _NEW = new SOOS({
-        web: req.body.web,
-        file: req.body.file,
-        token: reqToken
-      });
+    if (req.body.file) {
+      const existing = await getSourceDupe(req.body.file);
+      if (!existing) {
+        const _NEW = new SOOS({
+          web: req.body.web,
+          file: req.body.file,
+          token: reqToken
+        });
 
-      while (await getSource(_NEW.sid))
-        _NEW.sid = Math.floor(new Date().valueOf() * Math.random());
+        while (await getSource(_NEW.sid))
+          _NEW.sid = Math.floor(new Date().valueOf() * Math.random());
 
-      const conn = await sourcePool.getConnection(),
-        _ = await conn.insert(process.env.DB_SOURCES_TABL, _NEW),
-        __ = await conn.done();
+        const conn = await sourcePool.getConnection(),
+          _ = await conn.insert(process.env.DB_SOURCES_TABL, _NEW),
+          __ = await conn.done();
 
-      $.set(`SOOS_${_NEW.sid}`, _NEW);
-      res.json({
-        status: "ok",
-        msg: "Soße hinzugefügt!",
-        data: `http://${host.split("//")[1]}/${_NEW.sid}`
-      });
-    } else res.json({ status: "nok", msg: "Quelldatei bereits eingefügt." });
-  } else res.json({ status: "nok", msg: "inkorrektes token." });
+        $.set(`SOOS_${_NEW.sid}`, _NEW);
+        res.json({
+          status: "ok",
+          msg: "Soße hinzugefügt!",
+          data: `http://${host.split("//")[1]}/${_NEW.sid}`
+        });
+      } else res.json({ status: "nok", msg: "Quelldatei bereits eingefügt." });
+    } else res.json({ status: "nok", msg: "Quelldatei darf nicht leer sein." });
+  } else res.json({ status: "nok", msg: "Inkorrektes token." });
 });
 
 //save post
