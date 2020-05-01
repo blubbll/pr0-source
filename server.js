@@ -22,22 +22,6 @@ const getType = req => {
   return "visit";
 };
 
-//todo: use actual mysql db for posts
-const DB = {
-
-  1588182495145: {
-    file:
-      "https://r4---sn-4g5e6nzz.googlevideo.com/videoplayback?expire=1588252615&ei=Z3uqXuTnM5mngAfj74WIDA&ip=24.134.59.13&id=o-AC2X59LBnGRR-ZzgMaGtMKFA1LbdAk7ibnpvQ1PZIq8F&itag=22&source=youtube&requiressl=yes&mh=C6&mm=31%2C26&mn=sn-4g5e6nzz%2Csn-5hne6nsr&ms=au%2Conr&mv=m&mvi=3&pl=18&initcwndbps=1327500&vprv=1&mime=video%2Fmp4&ratebypass=yes&dur=42.097&lmt=1577534065537890&mt=1588230931&fvip=4&c=WEB&txp=1306222&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cratebypass%2Cdur%2Clmt&sig=AJpPlLswRAIgYUKVxUV41qj-r8CSI2PYz8MYFnxx8YyAFQCaBHkymXYCIA3UIDu5ZMS_ahaqoIbRpPQF_v_6pzNFQ4gzAtXNFEf5&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=ALrAebAwRQIhAKlZfNBAgutd8lCsV_Je0ouLc2RBV5ALz-Y0fTX-rVqrAiAuYLoqUlIirA6RSGFMgkLSw1T-fhYesqSxaOQA8RvTWQ%3D%3D&host=r4---sn-4g5e6nzz.googlevideo.com",
-    web: "https://www.youtube.com/watch?v=5lcdSm6v5EA"
-  },
-  1588232765108: {
-    file:
-      "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/39da62f1-b049-4f7a-b10b-4cc5167cb9a2/ddmcfd6-308f2b47-0637-422a-a8a2-cb17a07dfe50.png/v1/fill/w_706,h_1000,q_80,strp/rainbow_dash_in_swimsuit_by_the_park_ddmcfd6-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAwMCIsInBhdGgiOiJcL2ZcLzM5ZGE2MmYxLWIwNDktNGY3YS1iMTBiLTRjYzUxNjdjYjlhMlwvZGRtY2ZkNi0zMDhmMmI0Ny0wNjM3LTQyMmEtYThhMi1jYjE3YTA3ZGZlNTAucG5nIiwid2lkdGgiOiI8PTcwNiJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.sSX3lk1Ry9vUEm8dlehM5Edo0-tdapI0r3cpGZoek88",
-    web:
-      "https://www.deviantart.com/the-park/art/Rainbow-Dash-in-swimsuit-823591626"
-  }
-};
-
 app.set("trust proxy", true);
 
 // https://expressjs.com/en/starter/basic-routing.html
@@ -73,22 +57,14 @@ app.post("/welcome", (req, res) => {
   res.json("yo");
 });
 
-//bongo
-app.get("/*", (req, res, next) => {
-  //if(getType(req) === "visit" && isNaN(+req.originalUrl) && req.headers["cf-visitor"] && JSON.parse(req.headers["cf-visitor"]).scheme === "http"){ //upgrade cf directs
-  //  res.redirect(`https://${req.headers.host}${req.originalUrl}`);
-  //}
-  log(req);
-  next();
-});
-
 //CONCEPT4 ✓
 //-> /x
-app.all("/:id", (req, res) => {
-  const ID = req.params.id,
-    ENTRY = DB[ID];
-  ID && ENTRY
-    ? [res.redirect(isUpload(req) ? DB[ID].file : DB[ID].web)] //link found, redirect to link
+app.all("/:id", async (req, res) => {
+  const ID = !isNaN(req.params.id) ? req.params.id : 0;
+  let SOOS = $.get(`SOOS_${ID}`);
+  if (!SOOS) SOOS = $.set(`SOOS_${ID}`, await getSource(ID));
+  ID && SOOS
+    ? [res.redirect(isUpload(req) ? SOOS.file : SOOS.web)] //link found, redirect to link
     : //entry not found, check if path is number...
       res.write(
         fs
@@ -96,6 +72,7 @@ app.all("/:id", (req, res) => {
           .replace(/{{host}}/g, host)
           .replace("{{from}}", `/${isNaN(+ID) ? 204 : 404}`) //if path is number but not found, notify client about 404, else about invalid serverside path
       ) && res.end();
+  log(req)
 });
 
 app.get("/*", (req, res) => {
@@ -114,27 +91,65 @@ app.post("/", (req, res) => {
   //crypto.createHash('md5').update(link.web).digest("hex");
 });
 
-
-const linkPool = $.set(
-    "linkPool",
+const sourcePool = $.set(
+    "sourcePool",
     mySqlEasier.createPool({
-      host: process.env.DB_CONTACT_HOST,
-      user: process.env.DB_CONTACT_USER,
-      password: process.env.DB_CONTACT_PASS,
-      database: process.env.DB_CONTACT_NAME
+      host: process.env.DB_SOURCES_HOST,
+      user: process.env.DB_SOURCES_USER,
+      password: process.env.DB_SOURCES_PASS,
+      database: process.env.DB_SOURCES_NAME
     })
   ),
-  getContacts = async () =>
+  getSources = async () =>
     new Promise(async (resolve, reject) => {
-      let dbusers;
-      const conn = await linkPool.getConnection();
-      conn.getAll("links").then(users => {
-        dbusers = links;
-        dbusers.sort((a, b) =>{
+      let data;
+      const conn = await sourcePool.getConnection();
+      conn.getAll("sources").then(_data => {
+        data = _data;
+        console.log(_data);
+        data.sort((a, b) => {
+          return a.created - b.created || `${a}`.localeCompare(b);
+        });
+        console.log("got data.");
+        return resolve(data);
+      });
+      conn.done();
+    });
+
+const getSource = async id => {
+  const conn = await sourcePool.getConnection();
+
+  const source = await conn.query(
+    `select * from ${process.env.DB_SOURCES_TABL} where sid = ${id}`
+  );
+  if (source.length) return source[0];
+  else return void 0;
+};
+
+(async () => {
+  console.log((await getSource("1588182495145")).active[0] === 1);
+})();
+
+const tokenPool = $.set(
+    "tokenPool",
+    mySqlEasier.createPool({
+      host: process.env.DB_TOKENS_HOST,
+      user: process.env.DB_TOKENS_USER,
+      password: process.env.DB_TOKENS_PASS,
+      database: process.env.DB_TOKENS_NAME
+    })
+  ),
+  getTOKENS = async () =>
+    new Promise(async (resolve, reject) => {
+      let data;
+      const conn = await tokenPool.getConnection();
+      conn.getAll("TOKENS").then(_data => {
+        data = _data;
+        data.sort((a, b) => {
           return a.name.length - b.name.length || a.localeCompare(b);
         });
-        console.log("got links.");
-        return resolve(dblinks);
+        console.log("got data.");
+        return resolve(data);
       });
       conn.done();
     });

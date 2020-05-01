@@ -22,6 +22,9 @@ footer {
   max-width: 100vw;
   min-width: 62vw;
 }
+footer a{
+  text-decoration: underline;
+}
 /* Head-inner */
 header-content,
 footer-content {
