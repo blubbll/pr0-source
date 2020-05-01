@@ -11,8 +11,10 @@ const app = {};
   const setActiveView = path => {
     console.debug("active view was set to", path);
 
+    //update document title
     document.title = `${app.otitle} ${path}`; //hairspace
 
+    //set currently active view
     for (const _view of $$("view")) {
       _view.setAttribute(
         "active",
@@ -20,6 +22,7 @@ const app = {};
       );
     }
 
+    //path initialisation
     switch (path) {
       case "/add":
         {
@@ -37,6 +40,7 @@ const app = {};
     }
   };
 
+  //add new source
   app.add = () => {
     fetch(location.href, {
       body: JSON.stringify({
@@ -58,7 +62,7 @@ const app = {};
     return false; //form
   };
 
-  //get app id on fetchy
+  //edit-preflight (triggers on idField-valuechange)
   app.gedit = elem => {
     const fill = url => {};
     //fix domain to id
@@ -77,6 +81,7 @@ const app = {};
       });
   };
 
+  //edit source
   app.edit = () => {
     fetch(location.href, {
       body: JSON.stringify({
@@ -98,6 +103,7 @@ const app = {};
     return false; //form
   };
 
+  //disable a source
   app.checkDelete = () => {
     if (confirm("echt?")) {
       fetch(location.href, {
@@ -126,7 +132,7 @@ const app = {};
     alert("token changed");
   };
 
-  //sync activ enav link
+  //sync active nav link styling
   const syncNavlinks = href => {
     for (const _link of $$("header-content navlink")) {
       _link.setAttribute(
@@ -150,6 +156,7 @@ const app = {};
   window.onload = () => {
     {
       app.otitle = document.title;
+      //lil welcome ping
       fetch("/welcome", { method: "POST" });
       const path = getPath();
       console.debug("Coming from path", path);
@@ -170,19 +177,23 @@ const app = {};
     }
   };
 
+  //update paths when changing history clientside
   window.onpopstate = event => {
     const path = getPath();
     setActiveView(path);
     app.path = path;
   };
 
+  //click-navigation on headlinks
   for (const link of $$("navlink")) {
     link.addEventListener("click", () => {
       const href = link.getAttribute("href");
 
+      //no reloading
       if (app.path === href) return;
       console.debug("Navigating to path", href);
 
+      //update to path if exist
       if ($(`view[path="${href}"]`)) {
         setActiveView(`/${href.split("/")[1]}`);
         history.pushState(null, null, href);
@@ -194,6 +205,7 @@ const app = {};
         location.reload(true);
       }
 
+      //update navlink styling to reflect current navigation
       syncNavlinks(href);
     });
   }
