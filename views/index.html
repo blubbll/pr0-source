@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="./pr0.css" />
     <!-- server-> client path messaging -->
     <meta name="from" value="{{from}}" />
+    <meta name="msg" value="{{msg}}"/>
     <!-- assets -->
     <link rel="stylesheet" href="./custom.css" />
     <script src="./custom.js" defer></script>
@@ -57,7 +58,11 @@
             >&thinsp;edit</navlink
           >
           <navlink href="/tok">
-         <svg xmlns="http://www.w3.org/2000/svg"  viewbox="0 0 24 24"><path d="M12.451 17.337l-2.451 2.663h-2v2h-2v2h-6v-5l6.865-6.949c1.08 2.424 3.095 4.336 5.586 5.286zm11.549-9.337c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8 8 3.582 8 8zm-3-3c0-1.104-.896-2-2-2s-2 .896-2 2 .896 2 2 2 2-.896 2-2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+              <path
+                d="M12.451 17.337l-2.451 2.663h-2v2h-2v2h-6v-5l6.865-6.949c1.08 2.424 3.095 4.336 5.586 5.286zm11.549-9.337c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8 8 3.582 8 8zm-3-3c0-1.104-.896-2-2-2s-2 .896-2 2 .896 2 2 2 2-.896 2-2z"
+              />
+            </svg>
             &thinsp;token</navlink
           >
         </header-content>
@@ -70,37 +75,28 @@
       <view path="/new">
         <h2><u>Neuer Soßenlink</u></h2>
         <br />
-        <form method="POST" action="{{host}}">
+        <form method="POST">
           <div class="form-row">
             <label>File-Direktlink:</label>
             <input
-              type="text"
               name="fileUrl"
               class="text-line"
               placeholder="Direktlink"
               autocomplete="off"
+              type="search"
             />
           </div>
           <div class="form-row">
             <label>Web:</label>
             <input
-              type="url"
+              type="search"
               name="fileSource"
               class="text-line"
               placeholder="Quellseiten-Adresse"
               autocomplete="off"
             />
           </div>
-          <div class="form-row">
-            <label>Token</label>
-            <input
-              type="password"
-              name="token"
-              class="text-line"
-              placeholder="App-Token eingeben du Spacken"
-              autocomplete="off"
-            />
-          </div>
+
           <div class="form-row">
             <br />
             <input
@@ -114,16 +110,16 @@
       <view path="/edit">
         <h2><u>Link bearbeiten:</u></h2>
         <br />
-        <form method="POST" action="{{host}}">
+        <form method="POST">
           <div class="form-row">
-            <label>soßen-id:</label>
+            <label>Soßen-ID:</label>
             <input
-              type="text"
-              name="sourceId"
+              type="search"
+              name="editId"
               class="text-line"
               placeholder="id"
               autocomplete="off"
-                   onchange="this.value=this.value.split('/[2]')"
+              onchange="this.value=this.value.split('/')[3]"
             />
           </div>
           <div class="form-row">
@@ -132,17 +128,7 @@
               type="url"
               name="webSource"
               class="text-line"
-              placeholder="Soßen-Adresse"
-              autocomplete="off"
-            />
-          </div>
-          <div class="form-row">
-            <label>Token</label>
-            <input
-              type="password"
-              name="token"
-              class="text-line"
-              placeholder="App-Token eingeben du Spacken"
+              placeholder="Quellseiten-Adresse"
               autocomplete="off"
             />
           </div>
@@ -151,9 +137,9 @@
             <input type="hidden" name="disable" />
             <input
               type="submit"
-              value="Link löschen"
+              value="S0ße löschen"
               class="confirm-button delete"
-              onclick="return confirm('echt?')"
+              onclick="return app.checkDelete()"
             />
             <input
               type="submit"
@@ -164,6 +150,32 @@
         </form>
       </view>
       <view path="/tok">
+        <div class="form-row">
+          <label>Token <muted>(hover to show)</muted>:</label>
+          <br />
+          <form onsubmit="return false">
+            <input
+              type="password"
+              name="setToken"
+              class="text-line"
+              placeholder="App-T0ken(LastPass empfohlen)"
+              autocomplete="off"
+              onmouseenter="this.setAttribute('type', 'text')"
+              onmouseleave="this.setAttribute('type', 'password')"
+            />
+          </form>
+          <br /><br />
+
+          <input
+            type="submit"
+            value="change token"
+            class="confirm-button add-link"
+            onclick="app.updateToken()"
+          />
+          <br />
+          <!-- never put "Token" into placeholder when using with LastPass-->
+        </div>
+
         Ihr braucht nen Token? Schreibts mich im Discord an oder auf dem
         <a href="https://pr0gramm.com/inbox/messages/Nikei">pr0</a>&thinsp;!
       </view>
@@ -182,6 +194,11 @@
       <view path="/posted">
         <h3>(･ω-)☆ Link erfolgreich erstellt:</h3>
         <input name="paste" onclick="this.select()" value="keks" />
+        <br />
+        <muted><i>(bereit zum pasten)</i></muted>
+      </view>
+      <view path="/msg">
+        <h3>(･ω-)☆ Link {{id}}erfolgreich bearbeitet.</h3>
         <br />
         <muted><i>(bereit zum pasten)</i></muted>
       </view>

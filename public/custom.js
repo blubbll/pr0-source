@@ -19,6 +19,17 @@ const app = {};
     }
   };
 
+  app.checkDelete = () => {
+    if (confirm("echt?")) $("input[name=disable]").value = 1;
+    return false;
+  };
+
+  //update token
+  app.updateToken = () => {
+    localStorage.setItem("token", $("input[name=setToken]").value);
+    location.reload(true);
+  };
+
   //sync activ enav link
   const syncNavlinks = href => {
     for (const _link of $$("header-content navlink")) {
@@ -30,12 +41,13 @@ const app = {};
   };
   //get current path
   const getPath = () => {
-    return $(`view[path="/${location.href.split("/")[3]}"]`) //does path exist as view
-      ? `/${location.href.split("/")[3]}` //go to that view
+    const splut = `/${location.href.split("/")[3].split(":")[0]}`;
+    return $(`view[path="${splut}"]`) //does path exist as view
+      ? splut //go to that view
       : $("meta[name=from]") //else get server->client path
           .getAttribute("value")
           .replace("{{from}}", "") ||
-          `/${location.href.split("/")[3]}` ||
+          splut ||
           "/";
   };
 
@@ -49,6 +61,19 @@ const app = {};
       }
       setActiveView(path);
       syncNavlinks(path);
+
+      //sync setToken
+      $("input[name=setToken]").value = localStorage.getItem("token");
+      //sync hiddenTokens
+      for (const hf of $$("input[type=hidden]")) {
+        hf.value = localStorage.getItem("token");
+      }
+      //reset values
+      $("input[name=disable]").value = "";
+
+      if (path === "/msg" && location.href.includes("/msg:")) {
+        $("view[path='/msg']").innerText = $("meta[name=msg]").getAttribute("value")
+      }
     }
   };
 

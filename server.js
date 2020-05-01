@@ -6,7 +6,9 @@ const //imports
   fs = require("fs"),
   $ = require("node-global-storage"),
   mySqlEasier = require("mysql-easier"),
-  shortid = require("shortid");
+  shortid = require("shortid"),
+  atob = require("atob"),
+  btoa = require("btoa");
 
 app.use(express.static("public"));
 
@@ -57,12 +59,33 @@ app.post("/welcome", (req, res) => {
   res.json("yo");
 });
 
+//save post
+app.post("/edit", (req, res) => {
+  const ee = 1;
+  const msg = btoa(`Datensatz ${ee} erfolgreich bearbeitet kek`);
+  res.redirect(`/msg:${msg}`);
+  res.end();
+  //crypto.createHash('md5').update(link.web).digest("hex");
+});
+
+app.get("/msg*", (req, res) => {
+  res.write(
+    fs
+      .readFileSync(`${__dirname}/views/index.html`, "utf8")
+      .replace(/{{msg}}/g, atob(decodeURIComponent(req.originalUrl).split(":")[1]))
+  );
+
+  res.end();
+  //crypto.createHash('md5').update(link.web).digest("hex");
+});
+
 //CONCEPT4 ✓
 //-> /x
 app.all("/:id", async (req, res) => {
-  const ID = !isNaN(req.params.id) ? req.params.id : 0;
+  const ID = !isNaN(req.params.id) ? req.params.id : void 0;
+
   let SOOS = $.get(`SOOS_${ID}`);
-  if (!SOOS) SOOS = $.set(`SOOS_${ID}`, await getSource(ID));
+  if (ID && !SOOS) SOOS = $.set(`SOOS_${ID}`, await getSource(ID));
   ID && SOOS
     ? [res.redirect(isUpload(req) ? SOOS.file : SOOS.web)] //link found, redirect to link
     : //entry not found, check if path is number...
@@ -72,7 +95,7 @@ app.all("/:id", async (req, res) => {
           .replace(/{{host}}/g, host)
           .replace("{{from}}", `/${isNaN(+ID) ? 204 : 404}`) //if path is number but not found, notify client about 404, else about invalid serverside path
       ) && res.end();
-  log(req)
+  log(req);
 });
 
 app.get("/*", (req, res) => {
@@ -82,13 +105,6 @@ app.get("/*", (req, res) => {
       .replace(/{{host}}/g, host)
       .replace("{{from}}", "/400") //how did we get here lol
   ) && res.end();
-});
-
-//save post
-app.post("/", (req, res) => {
-  console.log(req.query.token);
-  res.redirect("/posted");
-  //crypto.createHash('md5').update(link.web).digest("hex");
 });
 
 const sourcePool = $.set(
@@ -122,6 +138,7 @@ const getSource = async id => {
   const source = await conn.query(
     `select * from ${process.env.DB_SOURCES_TABL} where sid = ${id}`
   );
+  conn.done();
   if (source.length) return source[0];
   else return void 0;
 };

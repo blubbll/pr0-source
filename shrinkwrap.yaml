@@ -1,4 +1,6 @@
 dependencies:
+  atob: 2.1.2
+  btoa: 1.2.1
   express: 4.17.1
   mysql-easier: 2.1.0
   node-global-storage: 1.2.3
@@ -17,6 +19,13 @@ packages:
     dev: false
     resolution:
       integrity: sha1-ml9pkFGx5wczKPKgCJaLZOopVdI=
+  /atob/2.1.2:
+    dev: false
+    engines:
+      node: '>= 4.5.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
   /bignumber.js/9.0.0:
     dev: false
     resolution:
@@ -38,6 +47,13 @@ packages:
       node: '>= 0.8'
     resolution:
       integrity: sha512-dhEPs72UPbDnAQJ9ZKMNTP6ptJaionhP5cBb541nXPlW60Jepo9RV/a4fX4XWW9CuFNK22krhrj1+rgzifNCsw==
+  /btoa/1.2.1:
+    dev: false
+    engines:
+      node: '>= 0.4.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-SB4/MIGlsiVkMcHmT+pSmIPoNDoHg+7cMzmt3Uxt628MTz2487DKSqK/fuhFBrkuqrYv5UCEnACpF4dTFNKc/g==
   /bytes/3.1.0:
     dev: false
     engines:
@@ -479,6 +495,8 @@ registry: 'https://registry.npmjs.org/'
 shrinkwrapMinorVersion: 9
 shrinkwrapVersion: 3
 specifiers:
+  atob: ^2.1.2
+  btoa: ^1.2.1
   express: ^4.17.1
   mysql-easier: ^2.1.0
   node-global-storage: ^1.2.3

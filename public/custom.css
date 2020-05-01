@@ -124,7 +124,7 @@ input.delete {
 /* save bei edit */
 input.save-changes {
   float: right;
-  width: 70% !important;
+  width: 60% !important;
 }
 /* add-button */
 input.add-link{
