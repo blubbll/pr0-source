@@ -25,7 +25,10 @@ const getType = req => {
   if (req.headers["self"] !== void 0 && req.headers["self"] == "true") {
     return "self";
   }
-  if (req.headers["referer"] !== void 0 && req.protocol !== "https") {
+  if (
+    req.headers["user-agent"] === process.env.PR0AGENT &&
+    req.protocol === "https"
+  ) {
     return "upload";
   }
   return "visit";
@@ -49,7 +52,7 @@ app.get("/", (req, res) => {
   ) && res.end();
 });
 
-const host = "https://s0ße.link";
+const host = "https://s0sse.link";
 
 const log = req => {
   const _soos = +req.originalUrl.split("/")[1];
@@ -282,5 +285,7 @@ const tokenPool = $.set(
 
 // listen for requests :)
 const listener = app.listen(process.env.PORT, () => {
-  console.log(`Soßenapp läuft auf port ${listener.address().port} (app is running)`);
+  console.log(
+    `Soßenapp läuft auf port ${listener.address().port} (app is running)`
+  );
 });
