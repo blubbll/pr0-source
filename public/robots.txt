@@ -1,0 +1,4 @@
+# Alle Bots und Crawler ansprechen
+User-agent: *
+# alles verbieten
+Disallow: /

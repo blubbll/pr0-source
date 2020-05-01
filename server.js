@@ -24,17 +24,7 @@ const getType = req => {
 
 //todo: use actual mysql db for posts
 const DB = {
-  TEST1: {
-    file:
-      "https://www.welt.de/img/wirtschaft/mobile149047426/5551624067-ci23x11-w1280/Lego-Schuhe-hergestellt-von-der-franzoesi-8.jpg",
-    web:
-      "https://www.welt.de/wirtschaft/article149047427/So-genial-ist-die-Idee-hinter-den-Lego-Schuhen.html"
-  },
-  1588181276629: {
-    file:
-      "https://i.pinimg.com/originals/af/2e/50/af2e50f5458d5019831d53bc02634f0c.jpg",
-    web: "https://www.deviantart.com/dlowell/art/Cmc-Matrix-527689606"
-  },
+
   1588182495145: {
     file:
       "https://r4---sn-4g5e6nzz.googlevideo.com/videoplayback?expire=1588252615&ei=Z3uqXuTnM5mngAfj74WIDA&ip=24.134.59.13&id=o-AC2X59LBnGRR-ZzgMaGtMKFA1LbdAk7ibnpvQ1PZIq8F&itag=22&source=youtube&requiressl=yes&mh=C6&mm=31%2C26&mn=sn-4g5e6nzz%2Csn-5hne6nsr&ms=au%2Conr&mv=m&mvi=3&pl=18&initcwndbps=1327500&vprv=1&mime=video%2Fmp4&ratebypass=yes&dur=42.097&lmt=1577534065537890&mt=1588230931&fvip=4&c=WEB&txp=1306222&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cratebypass%2Cdur%2Clmt&sig=AJpPlLswRAIgYUKVxUV41qj-r8CSI2PYz8MYFnxx8YyAFQCaBHkymXYCIA3UIDu5ZMS_ahaqoIbRpPQF_v_6pzNFQ4gzAtXNFEf5&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=ALrAebAwRQIhAKlZfNBAgutd8lCsV_Je0ouLc2RBV5ALz-Y0fTX-rVqrAiAuYLoqUlIirA6RSGFMgkLSw1T-fhYesqSxaOQA8RvTWQ%3D%3D&host=r4---sn-4g5e6nzz.googlevideo.com",

@@ -20,16 +20,14 @@ const app = {};
   };
 
   //sync activ enav link
-  const syncNavlinks = (href) =>{
-  for (const _link of $$("header-content navlink")) {
-       
-        _link.setAttribute(
-          "active",
-          _link.getAttribute("href") === href ? true : false
-        );
-      }
-  
-  }
+  const syncNavlinks = href => {
+    for (const _link of $$("header-content navlink")) {
+      _link.setAttribute(
+        "active",
+        _link.getAttribute("href") === href ? true : false
+      );
+    }
+  };
   //get current path
   const getPath = () => {
     return $(`view[path="/${location.href.split("/")[3]}"]`) //does path exist as view
