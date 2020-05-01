@@ -49,7 +49,7 @@ app.get("/", (req, res) => {
   ) && res.end();
 });
 
-const host = "https://s0ße.link/";
+const host = "https://s0ße.link";
 
 const log = req => {
   const _soos = +req.originalUrl.split("/")[1];
@@ -74,7 +74,7 @@ class SOOS {
   constructor(obj) {
     this.web = obj.web || "";
     (this.file = obj.file || ""),
-      (this.active = obj.active || true),
+      (this.active = obj.active || Buffer.alloc(1, 1)), //Buffer.equals to compare buffers!
       (this.token = obj.token || ""),
       (this.sid = Math.floor(new Date().valueOf() * Math.random()));
   }
@@ -100,7 +100,11 @@ app.post("/add", async (req, res) => {
         __ = await conn.done();
 
       $.set(`SOOS_${_NEW.sid}`, _NEW);
-      res.json({ status: "ok", msg: "Soße hinzugefügt!", data: _NEW.sid });
+      res.json({
+        status: "ok",
+        msg: "Soße hinzugefügt!",
+        data: `http://${host.split("//")[1]}/${_NEW.sid}`
+      });
     } else res.json({ status: "nok", msg: "Quelldatei bereits eingefügt." });
   } else res.json({ status: "nok", msg: "inkorrektes token." });
 });
@@ -154,6 +158,7 @@ app.all("/:id", async (req, res) => {
   const ID = !isNaN(req.params.id) ? req.params.id : void 0;
 
   let SOOS = $.get(`SOOS_${ID}`);
+
   if (ID && !SOOS) SOOS = $.set(`SOOS_${ID}`, await getSource(ID));
 
   if (isSelf(req)) {
@@ -200,7 +205,6 @@ const sourcePool = $.set(
       const conn = await sourcePool.getConnection();
       conn.getAll("sources").then(_data => {
         data = _data;
-        console.log(_data);
         data.sort((a, b) => {
           return a.created - b.created || `${a}`.localeCompare(b);
         });
@@ -252,11 +256,6 @@ const getSourceDupe = async direct => {
   else return void 0;
 };
 
-(async () => {
-  //console.log((await getSource("1588182495145")).active[0] === 1);
-  //console.log((await getSource("1588182495145")).token);
-})();
-
 const tokenPool = $.set(
     "tokenPool",
     mySqlEasier.createPool({
@@ -281,11 +280,7 @@ const tokenPool = $.set(
       conn.done();
     });
 
-app.patch("/", (req, res) => {
-  console.log(req.query.token);
-});
-
 // listen for requests :)
 const listener = app.listen(process.env.PORT, () => {
-  console.log("Your app is listening on port " + listener.address().port);
+  console.log(`Soßenapp läuft auf port ${listener.address().port} (app is running)`);
 });

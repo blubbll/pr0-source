@@ -84,7 +84,7 @@ const app = {};
       .then(res => res.json())
       .then(json => {
         if (json.status === "ok") {
-          prompt(json.msg, `http://${location.host}/${json.data}`);
+          prompt(json.msg, json.data);
         } else alert(json.msg);
       });
     return false; //form
