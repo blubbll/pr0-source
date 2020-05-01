@@ -29,6 +29,7 @@ const app = {};
         {
           $("input[name=editID]").value = "";
           $("input[name=editWeb]").value = "";
+          $("input[name=editWeb]").disabled = false;
         }
         break;
     }

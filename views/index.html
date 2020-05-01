@@ -75,7 +75,7 @@
       <view path="/add">
         <h2><u>Neuer Soßenlink</u></h2>
         <br />
-       <form onsubmit="return app.add();">
+        <form onsubmit="return app.add();">
           <div class="form-row">
             <label>File-Direktlink:</label>
             <input
@@ -83,13 +83,13 @@
               class="text-line"
               placeholder="Direktlink"
               autocomplete="off"
-              type="search"
+              type="url"
             />
           </div>
           <div class="form-row">
             <label>Web:</label>
             <input
-              type="search"
+              type="url"
               name="addWeb"
               class="text-line"
               placeholder="Quellseiten-Adresse"
@@ -114,7 +114,7 @@
           <div class="form-row">
             <label>Soßen-ID:</label>
             <input
-              type="search"
+              type="number"
               name="editID"
               required
               class="text-line"
@@ -130,14 +130,14 @@
               name="editWeb"
               class="text-line"
               placeholder="Quellseiten-Adresse"
-                   disabled
+              disabled
               autocomplete="off"
             />
           </div>
           <div class="form-row">
             <br />
             <input
-                   tabindex="-1"
+              tabindex="-1"
               type="submit"
               value="S0ße löschen"
               class="confirm-button delete"
@@ -224,7 +224,7 @@
               <a href="http://pr0gramm.com/">pr0gramm</a> zu tun.
             </i>
           </h4>
-          <br/>
+          <br />
           <h5>
             ©by Blu, Kau & Nikei
           </h5>
