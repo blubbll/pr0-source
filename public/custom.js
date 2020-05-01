@@ -35,11 +35,32 @@ const app = {};
     }
   };
 
+  app.add = () => {
+    fetch(location.href, {
+      body: JSON.stringify({
+        token: $("input[name=appToken]").value,
+        file: $("input[name=addDirect]").value,
+        web: $("input[name=addWeb]").value
+      }),
+      headers: {
+        "CONTENT-TYPE": "application/json" //wichtig lol
+      },
+      method: "POST"
+    })
+      .then(res => res.json())
+      .then(json => {
+        if (json.status === "ok") {
+          prompt(json.msg, json.data);
+        } else alert(json.msg);
+      });
+    return false; //form
+  };
+
   //get app id on fetchy
   app.gedit = elem => {
     const fill = url => {};
     //fix domain to id
-    if (elem.value.includes("//")) elem.value = elem.value.split("/")[3];
+    if (elem.value.includes("//")) elem.value = +elem.value.split("/")[3];
     const f = fetch(`/${elem.value}`, { headers: { self: true } })
       .then(res => res.json())
       .then(json => {
@@ -65,27 +86,6 @@ const app = {};
       .then(json => {
         if (json.status === "ok") {
           alert(json.msg);
-        } else alert(json.msg);
-      });
-    return false; //form
-  };
-
-  app.add = () => {
-    fetch(location.href, {
-      body: JSON.stringify({
-        token: $("input[name=appToken]").value,
-        file: $("input[name=addDirect]").value,
-        web: $("input[name=addWeb]").value
-      }),
-      headers: {
-        "CONTENT-TYPE": "application/json" //wichtig lol
-      },
-      method: "POST"
-    })
-      .then(res => res.json())
-      .then(json => {
-        if (json.status === "ok") {
-          prompt(json.msg, json.data);
         } else alert(json.msg);
       });
     return false; //form
