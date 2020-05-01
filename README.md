@@ -1,3 +1,10 @@
-#Projekt S0ße
+## Projekt s0ße
 
-Kleines Proof-of-Concept, welches einem beim Uploaden beim angeben einer Soße hilft.
+Kleines Proof-of-Concept, welches einem bei der Angabe bei Soßen hilft.
+
+- Auth via app-keys.
+- Soßen werden in MySQL-DB gespeichert
+- einfache Oberfläche mit großer Wirkung.
+- Freiheit
+
+[https://s0ße.link](https://sosse.link)
