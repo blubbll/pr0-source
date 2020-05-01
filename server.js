@@ -42,7 +42,7 @@ const getType = req => {
     return "upload";
   }
   if (req.originalUrl.split("/")[1] === "welcome") return "app_open";
-  if (+req.originalUrl.split("/")[1]) return "source_click";
+  if (+req.originalUrl.split("/")[1]) return "visit_source";
   return "visit";
 };
 
@@ -67,7 +67,7 @@ app.get("/", (req, res) => {
 const host = "https://s0sse.link";
 
 const log = req => {
-  const _soos = +req.originalUrl.split("/")[1];
+  const _source = +req.originalUrl.split("/")[1];
   console.debug({
     proto: JSON.parse(req.headers["cf-visitor"]).scheme,
     ua: req.get("User-Agent"),
@@ -77,7 +77,7 @@ const log = req => {
       : req.ip,
     url: `${req.protocol}://${req.headers.host}${req.originalUrl}`,
     referrer: req.headers["referrer"] || "",
-    soos: _soos !== NaN ? _soos : 404
+    source: _source !== NaN ? _source : 404
   });
 };
 
