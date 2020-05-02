@@ -46,7 +46,7 @@ const app = {};
 
       case "/tok":
         {
-          $("input[name=appToken]").value = app.token;
+          $("input[name=appToken]").value = app.token||"";
         }
         break;
     }
@@ -250,7 +250,7 @@ const app = {};
         //sync setToken
         app.token = $("input[name=appToken]").value = localStorage.getItem(
           "token"
-        );
+        )||"";
 
         updateTokIcon(true);
       } else updateTokIcon(false);
