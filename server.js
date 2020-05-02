@@ -6,9 +6,6 @@ const //imports
   fs = require("fs"),
   $ = require("node-global-storage"),
   mySqlEasier = require("mysql-easier"),
-  shortid = require("shortid"),
-  atob = require("atob"),
-  btoa = require("btoa"),
   sqlstring = require("sqlstring"),
   matomo = require("matomo-tracker");
 
