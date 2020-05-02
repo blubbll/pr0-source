@@ -108,7 +108,7 @@ const log = req => {
     url: `${JSON.parse(req.headers["cf-visitor"]).scheme}://${
       host.split("//")[1]
     }${req.originalUrl}`,
-    action_name: `${req.originalUrl} [${getType(req)}) - from log])`,
+    action_name: `${req.originalUrl} [${getType(req)} (from log)])`,
     ua: `${req.get("User-Agent")}`
   });
 };
