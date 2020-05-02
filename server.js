@@ -136,8 +136,8 @@ app.post("/add", async (req, res) => {
       const existing = await getSourceDupe(req.body.file);
       if (!existing) {
         const _NEW = new SOOS({
-          web: req.body.web,
-          file: req.body.file,
+          web: req.body.web.trim(),
+          file: req.body.file.trim(),
           token: reqToken
         });
 
@@ -168,7 +168,7 @@ app.patch("/edit", async (req, res) => {
     if (SOOS) {
       if (await tokenBelong(reqToken, SOOS)) {
         SOOS.active = Buffer.alloc(1, 1);
-        SOOS.web = req.body.web;
+        SOOS.web = req.body.web.trim();
         const conn = await sourcePool.getConnection(),
           _ = conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
           __ = conn.done();
