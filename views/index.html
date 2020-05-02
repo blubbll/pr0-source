@@ -54,6 +54,12 @@
             </svg>
             add</navlink
           >
+          <navlink href="/up"
+            ><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+              <path d="M7 11v13h2v-5h2v3h2v-7h2v9h2v-13h6l-11-11-11 11z" />
+            </svg>
+            up</navlink
+          >
           <navlink href="/edit"
             ><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
               <path
@@ -62,13 +68,32 @@
             >&thinsp;edit</navlink
           >
           <navlink href="/tok">
-            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+            token
+            <svg
+              id="tok"
+              style="transform: rotate(-45deg); display: none;"
+              xmlns="http://www.w3.org/2000/svg"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              viewbox="0 0 24 24"
+            >
               <path
-                d="M12.451 17.337l-2.451 2.663h-2v2h-2v2h-6v-5l6.865-6.949c1.08 2.424 3.095 4.336 5.586 5.286zm11.549-9.337c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8 8 3.582 8 8zm-3-3c0-1.104-.896-2-2-2s-2 .896-2 2 .896 2 2 2 2-.896 2-2z"
+                d="M12.804 9c1.038-1.793 2.977-3 5.196-3 3.311 0 6 2.689 6 6s-2.689 6-6 6c-2.219 0-4.158-1.207-5.196-3h-3.804l-1.506-1.503-1.494 1.503-1.48-1.503-1.52 1.503-3-3.032 2.53-2.968h10.274zm7.696 1.5c.828 0 1.5.672 1.5 1.5s-.672 1.5-1.5 1.5-1.5-.672-1.5-1.5.672-1.5 1.5-1.5z"
               />
             </svg>
-            &thinsp;token</navlink
-          >
+            <svg
+              id="notok"
+              style="transform: rotate(-45deg); display: none;"
+              viewbox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+            >
+              <path
+                d="M4.811 4l13.186 15.714-1.521 1.286-5.046-6h-2.43l-1.506-1.503-1.494 1.503-1.48-1.503-1.52 1.503-3-3.032 2.53-2.968h3.866l-3.117-3.714 1.532-1.286zm6.156 5h1.837c1.038-1.793 2.977-3 5.196-3 3.311 0 6 2.689 6 6 0 3.143-2.421 5.724-5.498 5.979l-7.535-8.979zm9.533 1.5c.828 0 1.5.672 1.5 1.5s-.672 1.5-1.5 1.5-1.5-.672-1.5-1.5.672-1.5 1.5-1.5z"
+              />
+            </svg>
+          </navlink>
         </header-content>
       </header>
       <view path="/">
@@ -83,6 +108,7 @@
           <div class="form-row">
             <label>Datei-Direktlink:</label>
             <input
+              style="width: 80%!important float: right;"
               name="addDirect"
               class="text-line"
               placeholder="Direktlink zur Ressource"
@@ -110,6 +136,27 @@
               title="erstelle einen neuen Link"
             />
           </div>
+        </form>
+      </view>
+      <view path="/up">
+        <h2><u>Datei-direktupload</u></h2>
+        <br />
+        <form onsubmit="return app.up();">
+          <div class="upload-wrapper">
+                        <input type="file" name="myfile" required />
+
+            <button class="upload-droparea"><span class="upload-instruc">Datei auswählen oder per Drag &amp; Drop reinziehen</span>
+            
+            <span class="upload-ok">Bereit zum Uploaden</span></button>
+          </div>
+
+          <br /><br />
+          <input
+            type="submit"
+            value="Energie!"
+            class="confirm-button add-link"
+            title="speichere Datei auf Server"
+          />
         </form>
       </view>
       <view path="/edit">

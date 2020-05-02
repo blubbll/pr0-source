@@ -5,9 +5,12 @@
 }
 
 :root {
-  --theme-main-color: #ee4d2e;
+  /*--theme-main-color: #ee4d2e;
   --theme-secondary-color: #75c0c7;
-  --theme-logo-color: #d23c22;
+  --theme-logo-color: #d23c22;*/
+  --theme-main-color: #1db992;
+  --theme-secondary-color: #1b9677;
+  --theme-logo-color: #1db992;
 }
 
 html,
@@ -70,11 +73,11 @@ header-content {
 }
 
 footer a {
-    color: #888;
+  color: #888;
 }
 
 footer a:hover {
-    color: #F5F7F6;
+  color: #F5F7F6;
 }
 
 input.submit {
@@ -96,17 +99,16 @@ textarea {
   -webkit-appearance: none;
 }
 
-
 ::-webkit-input-placeholder {
-    color: #666;
+  color: #666;
 }
 
 ::-moz-placeholder {
-    color: #666;
+  color: #666;
 }
 
 :-ms-input-placeholder {
-    color: #666;
+  color: #666;
 }
 
 div.form-row {
@@ -146,4 +148,34 @@ label {
 
 label.checkbox-label {
   display: inline;
+}
+
+#upload-source {
+  height: 152px;
+}
+
+#upload-droparea {
+  color: #ccc;
+  border: 1px #ee4d2e solid;
+  border: 1px var(--theme-main-color) solid;
+  padding: 20px;
+  text-transform: uppercase;
+  text-align: center;
+  cursor: pointer;
+}
+
+#upload-droparea.active {
+  background-color: #ee4d2e;
+  background-color: var(--theme-main-color);
+  color: #F5F7F6;
+}
+
+#upload-droparea:hover {
+  color: #F5F7F6;
+}
+
+#upload-file {
+  visibility: hidden;
+  width: 0;
+  height: 0;
 }

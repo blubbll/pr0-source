@@ -40,7 +40,7 @@ const app = {};
     }
 
     //log path
-    fetch(path, {method: "HEAD" });
+    fetch(path, { method: "HEAD" });
   };
 
   //add new source
@@ -131,8 +131,16 @@ const app = {};
 
   //update token
   app.updateToken = () => {
-    localStorage.setItem("token", $("input[name=appToken]").value);
-    alert("token changed");
+    if ($("input[name=appToken]").value) {
+      localStorage.setItem("token", $("input[name=appToken]").value);
+      alert("token changed");
+
+      updateTokIcon(true);
+    } else {
+      alert("no token!");
+
+      updateTokIcon(false);
+    }
     return false; //form
   };
 
@@ -157,6 +165,16 @@ const app = {};
           "/";
   };
 
+  const updateTokIcon = state => {
+    if (state) {
+      $("#tok").style.display = "inline-block";
+      $("#notok").style.display = "none";
+    } else {
+      $("#notok").style.display = "inline-block";
+      $("#tok").style.display = "none";
+    }
+  };
+
   window.onload = () => {
     {
       app.otitle = document.title;
@@ -170,8 +188,12 @@ const app = {};
       setActiveView(path);
       syncNavlinks(path);
 
-      //sync setToken
-      $("input[name=appToken]").value = localStorage.getItem("token");
+      if (localStorage.getItem("token")) {
+        //sync setToken
+        $("input[name=appToken]").value = localStorage.getItem("token");
+
+        updateTokIcon(true);
+      } else updateTokIcon(false);
 
       if (path === "/msg" && location.href.includes("/msg:")) {
         $("view[path='/msg']").innerText = $("meta[name=msg]").getAttribute(
