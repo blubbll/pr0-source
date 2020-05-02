@@ -55,6 +55,50 @@ const app = {};
     fetch(path, { method: "HEAD" });
   };
 
+  //upload new file
+  app.up = () => {
+    const file = $("input[name=upFile]").files[0];
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      fetch(location.href, {
+        body: JSON.stringify({
+          token: app.token,
+          file: reader.result,
+          ending: file.name.split(".").pop(),
+          type: file.type
+        }),
+        headers: {
+          "CONTENT-TYPE": "application/json" //wichtig lol
+        },
+        method: "POST"
+      })
+        .then(res => res.json())
+        .then(json => {
+          if (json.status === "ok") {
+            //navigation magic
+            const newPath = "/add";
+            history.pushState(null, null, newPath),
+              setActiveView(newPath),
+              syncNavlinks(newPath);
+            setTimeout(() => {
+              ($("input[name=addDirect]").value = json.data),
+                $("input[name=addWeb]").focus();
+            });
+          } else alert(json.msg);
+
+          reader.onerror = error => {
+            alert(error);
+            console.error(error);
+          };
+
+          //fetch()
+        });
+    };
+    return false; //form
+  };
+
   //add new source
   app.add = () => {
     fetch(location.href, {
@@ -138,41 +182,6 @@ const app = {};
           } else alert(json.msg);
         });
     }
-    return false; //form
-  };
-
-  app.up = () => {
-    const file = $("input[name=upFile]").files[0];
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      fetch(location.href, {
-        body: JSON.stringify({
-          token: app.token,
-          file: reader.result,
-          ending: file.name.split(".").pop(),
-          type: file.type
-        }),
-        headers: {
-          "CONTENT-TYPE": "application/json" //wichtig lol
-        },
-        method: "POST"
-      })
-        .then(res => res.json())
-        .then(json => {
-          if (json.status === "ok") {
-            prompt(json.msg, json.data);
-          } else alert(json.msg);
-
-          reader.onerror = error => {
-            alert(error);
-            console.error(error);
-          };
-
-          //fetch()
-        });
-    };
     return false; //form
   };
 
