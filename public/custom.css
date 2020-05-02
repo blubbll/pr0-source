@@ -164,8 +164,8 @@ input[name="editWeb"] {
 }
 
 .upload-wrapper input[type="file"]:valid + .upload-droparea {
-  border-color: white;
-  background-color: rgba(0, 255, 0, 0.3);
+  color: black;
+  background-color: white;
 }
 
 /* valid msg */

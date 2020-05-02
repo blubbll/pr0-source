@@ -47,7 +47,7 @@ const app = {};
   app.add = () => {
     fetch(location.href, {
       body: JSON.stringify({
-        token: $("input[name=appToken]").value,
+        token: app.token,
         file: $("input[name=addDirect]").value,
         web: $("input[name=addWeb]").value
       }),
@@ -89,7 +89,7 @@ const app = {};
     fetch(location.href, {
       body: JSON.stringify({
         id: $("input[name=editID]").value,
-        token: $("input[name=appToken]").value,
+        token: app.token,
         web: $("input[name=editWeb]").value
       }),
       headers: {
@@ -112,7 +112,7 @@ const app = {};
       fetch(location.href, {
         body: JSON.stringify({
           id: $("input[name=editID]").value,
-          token: $("input[name=appToken]").value
+          token: app.token
         }),
         headers: {
           "CONTENT-TYPE": "application/json" //wichtig lol
@@ -129,10 +129,46 @@ const app = {};
     return false; //form
   };
 
+  app.up = () => {
+    const file = $("input[name=upFile]").files[0];
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      fetch(location.href, {
+        body: JSON.stringify({
+          body: JSON.stringify({
+            token: app.token
+          }),
+          headers: {
+            "CONTENT-TYPE": "application/json" //wichtig lol
+          },
+          method: "POST"
+        })
+          .then(res => res.json())
+          .then(json => {
+            if (json.status === "ok") {
+              alert(json.msg);
+            } else alert(json.msg);
+
+            reader.onerror = error => {
+              alert(error);
+              console.error(error);
+            };
+
+            //fetch()
+
+            return false; //form
+          })
+      });
+    };
+  };
+
   //update token
   app.updateToken = () => {
     if ($("input[name=appToken]").value) {
-      localStorage.setItem("token", $("input[name=appToken]").value);
+      const tok = app.token = $("input[name=appToken]").value;
+      localStorage.setItem("token", tok);
       alert("token changed");
 
       updateTokIcon(true);
@@ -190,7 +226,9 @@ const app = {};
 
       if (localStorage.getItem("token")) {
         //sync setToken
-        $("input[name=appToken]").value = localStorage.getItem("token");
+        app.token = $("input[name=appToken]").value = localStorage.getItem(
+          "token"
+        );
 
         updateTokIcon(true);
       } else updateTokIcon(false);

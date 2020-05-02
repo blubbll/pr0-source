@@ -54,12 +54,7 @@
             </svg>
             add</navlink
           >
-          <navlink href="/up"
-            ><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
-              <path d="M7 11v13h2v-5h2v3h2v-7h2v9h2v-13h6l-11-11-11 11z" />
-            </svg>
-            up</navlink
-          >
+
           <navlink href="/edit"
             ><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
               <path
@@ -67,8 +62,13 @@
               /></svg
             >&thinsp;edit</navlink
           >
-          <navlink href="/tok">
-            token
+          <navlink href="/up"
+            ><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+              <path d="M7 11v13h2v-5h2v3h2v-7h2v9h2v-13h6l-11-11-11 11z" />
+            </svg>
+            up</navlink
+          >          <navlink href="/tok">
+            auth
             <svg
               id="tok"
               style="transform: rotate(-45deg); display: none;"
@@ -143,11 +143,15 @@
         <br />
         <form onsubmit="return app.up();">
           <div class="upload-wrapper">
-                        <input type="file" name="myfile" required />
+            <input type="file" name="upFile" required />
 
-            <button class="upload-droparea"><span class="upload-instruc">Datei auswählen oder per Drag &amp; Drop reinziehen</span>
-            
-            <span class="upload-ok">Bereit zum Uploaden</span></button>
+            <button class="upload-droparea">
+              <span class="upload-instruc"
+                >Datei auswählen oder per Drag &amp; Drop reinziehen</span
+              >
+
+              <span class="upload-ok">Bereit zum Uploaden!</span>
+            </button>
           </div>
 
           <br /><br />
