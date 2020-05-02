@@ -126,6 +126,7 @@ footer {
 input.delete {
   width: auto !important;
   background-color: #c52b2f;
+  color: white;
   float: left;
 }
 /* save bei edit */
