@@ -77,7 +77,7 @@ const log = req => {
       : req.ip,
     url: `${req.protocol}://${req.headers.host}${req.originalUrl}`,
     referrer: req.headers["referrer"] || "",
-    source: _source !== NaN ? _source : 404
+    source: _source !== NaN ? _source : ""
   });
 };
 
@@ -135,13 +135,14 @@ app.patch("/edit", async (req, res) => {
     const SOOS = $.get(`SOOS_${ID}`) || (await getSource(ID));
     if (SOOS) {
       if (await tokenBelong(reqToken, SOOS)) {
-        SOOS.active = true;
+        SOOS.active = Buffer.alloc(1, 1);
         SOOS.web = req.body.web;
         const conn = await sourcePool.getConnection(),
           _ = conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
           __ = conn.done();
 
         $.set(`SOOS_${ID}`, SOOS);
+
         res.json({ status: "ok", msg: "Soße aktualisiert!" });
       } else
         res.json({ status: "nok", msg: "Token & Soße passen nicht zusammen" });
@@ -157,7 +158,7 @@ app.delete("/edit", async (req, res) => {
     const SOOS = $.get(`SOOS_${ID}`) || (await getSource(ID));
     if (SOOS) {
       if (await tokenBelong(reqToken, SOOS)) {
-        SOOS.active = false;
+        SOOS.active = Buffer.alloc(1, 0);
         const conn = await sourcePool.getConnection(),
           _ = conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
           __ = conn.done();
@@ -179,22 +180,26 @@ app.all("/:id", async (req, res) => {
 
   if (ID && !SOOS) SOOS = $.set(`SOOS_${ID}`, await getSource(ID));
 
+  //self request via edit-preflight
   if (isSelf(req)) {
     return res.json(
-      SOOS && SOOS.active !== [1]
+      SOOS && SOOS.active[0] !== 1
         ? { status: "ok", url: SOOS.web }
         : { status: "nok", msg: `soße ${ID} nicht gefunden.` }
     );
   }
 
-  ID && SOOS && SOOS.active[0]
+  ID && SOOS && SOOS.active[0] && SOOS.web
     ? [res.redirect(isUpload(req) ? SOOS.file : SOOS.web)] //link found, redirect to link
     : //entry not found, check if path is number...
       res.write(
         fs
           .readFileSync(`${__dirname}/views/index.html`, "utf8")
           .replace(/{{host}}/g, host)
-          .replace("{{from}}", `/${isNaN(+ID) ? 204 : 404}`) //if path is number but not found, notify client about 404, else about invalid serverside path
+          .replace(
+            "{{from}}",
+            `/${SOOS && !SOOS.web ? 302 : isNaN(+ID) ? 204 : 404}`
+          ) //if path is number but not found, notify client about 404, else about invalid serverside path
       ) && res.end();
   log(req);
 });
