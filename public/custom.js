@@ -149,31 +149,29 @@ const app = {};
     reader.onload = () => {
       fetch(location.href, {
         body: JSON.stringify({
-          body: JSON.stringify({
-            token: app.token
-          }),
-          headers: {
-            "CONTENT-TYPE": "application/json" //wichtig lol
-          },
-          method: "POST"
-        })
-          .then(res => res.json())
-          .then(json => {
-            if (json.status === "ok") {
-              alert(json.msg);
-            } else alert(json.msg);
+          token: app.token,
+          file: reader.result
+        }),
+        headers: {
+          "CONTENT-TYPE": "application/json" //wichtig lol
+        },
+        method: "POST"
+      })
+        .then(res => res.json())
+        .then(json => {
+          if (json.status === "ok") {
+            prompt(json.msg, json.data);
+          } else alert(json.msg);
 
-            reader.onerror = error => {
-              alert(error);
-              console.error(error);
-            };
+          reader.onerror = error => {
+            alert(error);
+            console.error(error);
+          };
 
-            //fetch()
-
-            return false; //form
-          })
-      });
+          //fetch()
+        });
     };
+    return false; //form
   };
 
   //update token

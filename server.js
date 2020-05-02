@@ -36,7 +36,7 @@ const getType = req => {
   if (req.headers["self"] !== void 0 && req.headers["self"] == "true") {
     return "self";
   }
-  if(req.method === "HEAD") return "navigation";
+  if (req.method === "HEAD") return "navigation";
   //uploader
   if (
     req.headers["user-agent"] === process.env.PR0AGENT &&
@@ -192,6 +192,27 @@ app.delete("/edit", async (req, res) => {
   res.end();
 });
 
+//save post
+app.post("/up", async (req, res) => {
+  const reqToken = await tokenResolve(req.body.token);
+
+  if (reqToken) {
+    if (req.body.file) {
+      const existing = await getSourceDupe(req.body.file);
+
+      const tmpID = Math.floor(new Date().valueOf() * Math.random());
+
+      //fs.writFileSync(`${__dirname}/tmp/${tmpID}`, "");
+
+      res.json({
+        status: "ok",
+        msg: "Datei hochgeladen!",
+        data: `http://${host.split("//")[1]}/tmp/${tmpID}`
+      });
+    } else res.json({ status: "nok", msg: "Datei fehlt" });
+  } else res.json({ status: "nok", msg: "Inkorrektes Token." });
+});
+
 //CONCEPT4 ✓
 //-> /x
 app.all("/:id", async (req, res) => {
@@ -224,7 +245,6 @@ app.all("/:id", async (req, res) => {
       ) && res.end();
   log(req);
 });
-
 
 app.get("/*", (req, res) => {
   res.write(
