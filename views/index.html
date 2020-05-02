@@ -8,12 +8,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="s0ße" />
     <meta name="robots" content="noindex, nofollow" />
+    <base href="{{host}}" />
+
     <script>
       {
+        //force host clientside
+        `${location.protocol}//${location.host}` !==
+          document.querySelector("base").getAttribute("href") && //lol dont do this before the <base>
+          location.replace(document.querySelector("base").getAttribute("href"));
+        console.log(location.protocol);
         //upgrade request clientside
-        if (location.protocol === "http:") {
+        if (location.protocol === "http:")
           location.replace(location.href.replace("http://", "https://"));
-        }
       }
     </script>
     <link
@@ -22,7 +28,6 @@
       href="https://cdn.glitch.com/bc9f669d-cc9f-4a65-88ee-6da1ff7d4ef0%2Flink_1f517.png?v=1588187945326"
       type="image/png"
     />
-    <base href="{{host}}" />
     <link rel="stylesheet" href="./pr0.css" />
     <!-- server-> client path messaging -->
     <meta name="from" value="{{from}}" />
@@ -168,7 +173,7 @@
               name="appToken"
               class="text-line"
               autocomplete="password"
-              placeholder="App-T0ken(LastPass empfohlen)"
+              placeholder="App-T0ken (LastPass empfohlen)"
               onmouseenter="this.setAttribute('type', 'text')"
               onmouseleave="this.setAttribute('type', 'password')"
             />

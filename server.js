@@ -68,6 +68,7 @@ const host = "https://s0sse.link";
 
 const log = req => {
   const _source = +req.originalUrl.split("/")[1];
+  //console log
   console.debug({
     proto: JSON.parse(req.headers["cf-visitor"]).scheme,
     ua: req.get("User-Agent"),
@@ -75,11 +76,13 @@ const log = req => {
     IP: req.headers["cf-connecting-ip"]
       ? req.headers["cf-connecting-ip"]
       : req.ip,
-    url: `${req.protocol}://${req.headers.host}${req.originalUrl}`,
+    url: `${JSON.parse(req.headers["cf-visitor"]).scheme}://${
+      host.split("//")[1]
+    }${req.originalUrl}`, //`${req.protocol}://${req.headers.host}${req.originalUrl}`
     referrer: req.headers["referrer"] || "",
     source: _source !== NaN ? _source : ""
   });
-
+  //matomo log
   m.track({
     token_auth: process.env.MATOMO_TOKEN,
     cip: req.headers["cf-connecting-ip"]
