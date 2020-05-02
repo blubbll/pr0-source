@@ -150,7 +150,9 @@ const app = {};
       fetch(location.href, {
         body: JSON.stringify({
           token: app.token,
-          file: reader.result
+          file: reader.result,
+          ending: file.name.split(".").pop(),
+          type: file.type
         }),
         headers: {
           "CONTENT-TYPE": "application/json" //wichtig lol

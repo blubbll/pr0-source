@@ -7,7 +7,8 @@ const //imports
   $ = require("node-global-storage"),
   mySqlEasier = require("mysql-easier"),
   sqlstring = require("sqlstring"),
-  matomo = require("matomo-tracker");
+  matomo = require("matomo-tracker"),
+  fsExtra = require("fs-extra");
 
 app.use(express.static("public"));
 
@@ -21,6 +22,16 @@ const mysqape = input => {
       .substring(1)
       .slice(0, -1);
 };
+
+//tmp uplaod dir
+{
+  const dir = `${__dirname}/tmp`;
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  } else {
+    fsExtra.emptyDirSync(dir);
+  }
+}
 
 //UPLOADING
 const isUpload = req => {
@@ -56,10 +67,10 @@ const getType = req => {
 app.set("trust proxy", true);
 
 // Parse URL-encoded bodies (as sent by HTML forms)
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ limit: "33mb", extended: true }));
 
 // Parse JSON bodies (as sent by API clients)
-app.use(express.json({ extended: true }));
+app.use(express.json({ limit: "33mb", extended: true }));
 
 // https://expressjs.com/en/starter/basic-routing.html
 app.get("/", (req, res) => {
@@ -192,7 +203,7 @@ app.delete("/edit", async (req, res) => {
   res.end();
 });
 
-//save post
+//tmpupload file and...
 app.post("/up", async (req, res) => {
   const reqToken = await tokenResolve(req.body.token);
 
@@ -202,15 +213,45 @@ app.post("/up", async (req, res) => {
 
       const tmpID = Math.floor(new Date().valueOf() * Math.random());
 
-      //fs.writFileSync(`${__dirname}/tmp/${tmpID}`, "");
-
-      res.json({
-        status: "ok",
-        msg: "Datei hochgeladen!",
-        data: `http://${host.split("//")[1]}/tmp/${tmpID}`
-      });
+      fs.writeFile(
+        `${__dirname}/tmp/${tmpID}.${req.body.ending}`,
+        req.body.file.split(";base64,").pop(),
+        { encoding: "base64" },
+        err => {
+          !err
+            ? res.json({
+                status: "ok",
+                msg: "Datei hochgeladen!",
+                data: `http://${host.split("//")[1]}/tmp/${tmpID}.${
+                  req.body.ending
+                }`
+              })
+            : res.json({ status: "nok", msg: JSON.stringify(err) });
+        }
+      );
     } else res.json({ status: "nok", msg: "Datei fehlt" });
   } else res.json({ status: "nok", msg: "Inkorrektes Token." });
+});
+
+//...get this file lol
+app.get("/tmp/:file", async (req, res) => {
+  const tmpFile = req.params.file;
+
+  if (tmpFile) {
+    const filePath = `${__dirname}/tmp/${tmpFile}`;
+    if (fs.existsSync(filePath)) {
+      //serve, then delete file
+      try {
+        res.sendFile(
+          filePath,
+          getType(req) === "upload" &&
+            setTimeout(() => fs.unlinkSync(filePath), 60 * 1000 * 2)
+        ); //delete in 2min
+      } catch (e) {
+        res.redirect("/500");
+      }
+    } else res.redirect("/404");
+  } else res.redirect("/400");
 });
 
 //CONCEPT4 ✓

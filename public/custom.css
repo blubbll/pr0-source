@@ -167,6 +167,9 @@ input[name="editWeb"] {
   color: black;
   background-color: white;
 }
+.upload-wrapper input[type="file"]:valid:hover + .upload-droparea{
+  color: black!important;
+}
 
 /* valid msg */
 .upload-wrapper input[type="file"]:valid + * > .upload-instruc {
