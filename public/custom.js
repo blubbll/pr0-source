@@ -38,6 +38,9 @@ const app = {};
         }
         break;
     }
+
+    //log path
+    fetch(path, {method: "HEAD" });
   };
 
   //add new source

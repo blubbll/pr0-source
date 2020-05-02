@@ -32,17 +32,23 @@ const isSelf = req => {
 };
 
 const getType = req => {
+  //self-preflight
   if (req.headers["self"] !== void 0 && req.headers["self"] == "true") {
     return "self";
   }
+  if(req.method === "HEAD") return "navigation";
+  //uploader
   if (
     req.headers["user-agent"] === process.env.PR0AGENT &&
     req.protocol === "https"
   ) {
     return "upload";
   }
+  //first ping
   if (req.originalUrl.split("/")[1] === "welcome") return "app_open";
+  //direct on source
   if (+req.originalUrl.split("/")[1]) return "visit_source";
+  //general visit
   return "visit";
 };
 
@@ -91,7 +97,7 @@ const log = req => {
     url: `${JSON.parse(req.headers["cf-visitor"]).scheme}://${
       host.split("//")[1]
     }${req.originalUrl}`,
-    action_name: `${req.originalUrl} (from log)`,
+    action_name: `${req.originalUrl} [${getType(req)}) - from log])`,
     ua: `${req.get("User-Agent")}`
   });
 };
@@ -218,6 +224,7 @@ app.all("/:id", async (req, res) => {
       ) && res.end();
   log(req);
 });
+
 
 app.get("/*", (req, res) => {
   res.write(

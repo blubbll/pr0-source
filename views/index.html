@@ -16,7 +16,6 @@
         `${location.protocol}//${location.host}` !==
           document.querySelector("base").getAttribute("href") && //lol dont do this before the <base>
           location.replace(document.querySelector("base").getAttribute("href"));
-        console.log(location.protocol);
         //upgrade request clientside
         if (location.protocol === "http:")
           location.replace(location.href.replace("http://", "https://"));
