@@ -130,6 +130,7 @@ const app = {};
   app.updateToken = () => {
     localStorage.setItem("token", $("input[name=appToken]").value);
     alert("token changed");
+    return false; //form
   };
 
   //sync active nav link styling
