@@ -9,9 +9,12 @@ const //imports
   shortid = require("shortid"),
   atob = require("atob"),
   btoa = require("btoa"),
-  sqlstring = require("sqlstring");
+  sqlstring = require("sqlstring"),
+  matomo = require("matomo-tracker");
 
 app.use(express.static("public"));
+
+let m = new matomo(process.env.MATOMO_ID, process.env.MATOMO_INSTANCE);
 
 const mysqape = input => {
   if (!isNaN(input)) return sqlstring.escape(input);
@@ -78,6 +81,18 @@ const log = req => {
     url: `${req.protocol}://${req.headers.host}${req.originalUrl}`,
     referrer: req.headers["referrer"] || "",
     source: _source !== NaN ? _source : ""
+  });
+
+  m.track({
+    token_auth: process.env.MATOMO_TOKEN,
+    cip: req.headers["cf-connecting-ip"]
+      ? req.headers["cf-connecting-ip"]
+      : req.ip,
+    url: `${JSON.parse(req.headers["cf-visitor"]).scheme}://${
+      host.split("//")[1]
+    }${req.originalUrl}`,
+    action_name: `${req.originalUrl} (from log)`,
+    ua: `${req.get("User-Agent")}`
   });
 };
 

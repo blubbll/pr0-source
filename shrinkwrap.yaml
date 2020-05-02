@@ -2,6 +2,7 @@ dependencies:
   atob: 2.1.2
   btoa: 1.2.1
   express: 4.17.1
+  matomo-tracker: 2.2.2
   mysql-easier: 2.1.0
   node-global-storage: 1.2.3
   shortid: 2.2.15
@@ -238,6 +239,12 @@ packages:
     dev: false
     resolution:
       integrity: sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=
+  /matomo-tracker/2.2.2:
+    dev: false
+    engines:
+      node: '>=4.2.0'
+    resolution:
+      integrity: sha512-xAeojX+LwXn+UHd6A72DbVkqc4a1a6SKCiQPBwpKA6x4R1qy1Nysg3kEfsh6Xq+bzPjcvn2ppDQb9JXcktmJDQ==
   /media-typer/0.3.0:
     dev: false
     engines:
@@ -505,6 +512,7 @@ specifiers:
   atob: ^2.1.2
   btoa: ^1.2.1
   express: ^4.17.1
+  matomo-tracker: ^2.2.1
   mysql-easier: ^2.1.0
   node-global-storage: ^1.2.3
   shortid: ^2.2.15

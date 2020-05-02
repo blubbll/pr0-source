@@ -16,7 +16,8 @@
     "shortid": "^2.2.15",
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
-    "sqlstring": "^2.3.2"
+    "sqlstring": "^2.3.2",
+    "matomo-tracker": "^2.2.1"
   },
   "engines": {
     "node": "12.x"
