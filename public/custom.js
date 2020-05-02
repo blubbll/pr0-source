@@ -22,7 +22,7 @@ const app = {};
       );
     }
 
-    //path initialisation
+    //path initialization
     switch (path) {
       case "/add":
         {
@@ -35,6 +35,18 @@ const app = {};
           $("input[name=editID]").value = "";
           $("input[name=editWeb]").value = "";
           $("input[name=editWeb]").disabled = true;
+        }
+        break;
+
+      case "/up":
+        {
+          $("input[name=upFile]").value = "";
+        }
+        break;
+
+      case "/tok":
+        {
+          $("input[name=appToken]").value = app.token;
         }
         break;
     }
@@ -167,8 +179,9 @@ const app = {};
   //update token
   app.updateToken = () => {
     if ($("input[name=appToken]").value) {
-      const tok = app.token = $("input[name=appToken]").value;
+      const tok = (app.token = $("input[name=appToken]").value);
       localStorage.setItem("token", tok);
+
       alert("token changed");
 
       updateTokIcon(true);
