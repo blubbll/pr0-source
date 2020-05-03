@@ -49,6 +49,13 @@ const app = {api: `${location.href.split("/").slice(0, 3).join("/")}/api`};
           $("input[name=appToken]").value = app.token || "";
         }
         break;
+        
+      case "/link":{
+        $("input[name=pr0user]").value="";
+        $("input[name=pr0pass]").value="";
+        app.getCap();
+        break;
+      }
     }
 
     //log path
@@ -215,7 +222,12 @@ const app = {api: `${location.href.split("/").slice(0, 3).join("/")}/api`};
   };
   
   //update token
-  app.getToken = () => {
+  app.getCap = () => {
+    
+    fetch(`${app.api}/cap`).then(res => res.json()).then(json => {
+      console.log(json)
+    })
+
    /* const resolvTok = $("input[name=appToken]").value;
     if ($("input[name=appToken]").value) {
       fetch(`${app.api}/resolve/${resolvTok}`, {
@@ -242,7 +254,47 @@ const app = {api: `${location.href.split("/").slice(0, 3).join("/")}/api`};
       updateTokIcon(false);
     }
     return false; //form*/
-    app.path = "/newtok";
+
+    
+  };
+  
+  //update token
+  app.link = () => {
+    
+
+    fetch(`${app.api}/link`,{ headers: {
+          "CONTENT-TYPE": "application/json" //wichtig lol
+        },
+        method: "GET"
+                            }
+
+   /* const resolvTok = $("input[name=appToken]").value;
+    if ($("input[name=appToken]").value) {
+      fetch(`${app.api}/resolve/${resolvTok}`, {
+        headers: {
+          "CONTENT-TYPE": "application/json" //wichtig lol
+        },
+        method: "GET"
+      })
+        .then(res => res.json())
+        .then(json => {
+          if (json.status === "ok") {
+            app.token = resolvTok;
+            localStorage.setItem("token", resolvTok);
+
+            alert("token changed");
+          } else {
+            updateTokIcon(false);
+            alert("invalid token");
+          }
+        });
+    } else {
+      alert("no token!");
+
+      updateTokIcon(false);
+    }
+    return false; //form*/
+    app.path = "/link";
     history.pushState(null, null, app.path);
     setActiveView(app.path)
     

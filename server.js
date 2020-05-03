@@ -8,7 +8,8 @@ const //imports
   mySqlEasier = require("mysql-easier"),
   sqlstring = require("sqlstring"),
   matomo = require("matomo-tracker"),
-  fsExtra = require("fs-extra");
+  fsExtra = require("fs-extra"),
+  fetch = require("node-fetch");
 
 app.use(express.static("public"));
 
@@ -43,7 +44,6 @@ const isSelf = req => {
 };
 
 const getType = req => {
-
   //self-preflight
   if (req.headers["self"] !== void 0 && req.headers["self"] == "true") {
     return "self";
@@ -51,9 +51,9 @@ const getType = req => {
   if (req.method === "HEAD") return "navigation";
   //uploader
   if (
-    req.headers["cf-connecting-ip"] === process.env.PR0IP
-    //req.headers["user-agent"] === process.env.PR0AGENT &&
-    //req.protocol === "https"
+    req.headers["cf-connecting-ip"] === process.env.PR0IP &&
+    req.headers["user-agent"] === process.env.PR0AGENT &&
+    req.protocol === "https"
   ) {
     return "upload";
   }
@@ -257,11 +257,41 @@ app.get("/tmp/:file", async (req, res) => {
 });
 
 const uuidv4 = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) =>{
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+    var r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
-}
+};
+
+app.get("/api/verify/cap", (req, res) => {
+  
+  fetch("https://pr0gramm.com/api/items/post", {
+  "headers": {
+    "accept": "application/json, text/javascript, */*; q=0.01",
+    "accept-language": "de",
+    "cache-control": "no-cache",
+    "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    "pragma": "no-cache",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-requested-with": "XMLHttpRequest"
+  },
+  "referrer": "https://pr0gramm.com/upload",
+  "referrerPolicy": "no-referrer-when-downgrade",
+  "body": "imageUrl=https%3A%2F%2Fimg.booru.org%2Fbrony%2F%2Fimages%2F1%2F0247cb142c1d01c263411a783d197e25ff307156.gif&sfwstatus=sfw&tags=&scheduleDate=&scheduleTime=&checkSimilar=1&key=&processAsync=1&_nonce=9ccfded83feaa836",
+  "method": "POST",
+  "mode": "cors",
+  "credentials": "include"
+}).then(res => res.json()).then(json =>{
+    console.log(json)
+  })
+  
+  /*fetch(`${process.env.PR0API}/user/captcha`)
+    .then(_res => _res.json())
+    .then(json => res.json(json));*/
+});
 
 app.get("/api/verify/:token", (req, res) => {
   console.warn(req.params.token);

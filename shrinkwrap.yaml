@@ -3,6 +3,7 @@ dependencies:
   fs-extra: 9.0.0
   matomo-tracker: 2.2.2
   mysql-easier: 2.1.0
+  node-fetch: 2.6.0
   node-global-storage: 1.2.3
   sqlstring: 2.3.2
 packages:
@@ -328,6 +329,12 @@ packages:
       node: '>= 0.6'
     resolution:
       integrity: sha512-hZXc7K2e+PgeI1eDBe/10Ard4ekbfrrqG8Ep+8Jmf4JID2bNg7NvCPOZN+kfF574pFQI7mum2AUqDidoKqcTOw==
+  /node-fetch/2.6.0:
+    dev: false
+    engines:
+      node: 4.x || >=6.0.0
+    resolution:
+      integrity: sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
   /node-global-storage/1.2.3:
     dependencies:
       underscore: 1.10.2
@@ -522,5 +529,6 @@ specifiers:
   fs-extra: ^9.0.0
   matomo-tracker: ^2.2.1
   mysql-easier: ^2.1.0
+  node-fetch: ^2.6.0
   node-global-storage: ^1.2.3
   sqlstring: ^2.3.2
