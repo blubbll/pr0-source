@@ -5,7 +5,12 @@ const //selectors
 
 console.clear();
 
-const app = {api: `${location.href.split("/").slice(0, 3).join("/")}/api`};
+const app = {
+  api: `${location.href
+    .split("/")
+    .slice(0, 3)
+    .join("/")}/api`
+};
 {
   //set active view
   const setActiveView = path => {
@@ -49,13 +54,6 @@ const app = {api: `${location.href.split("/").slice(0, 3).join("/")}/api`};
           $("input[name=appToken]").value = app.token || "";
         }
         break;
-        
-      case "/link":{
-        $("input[name=pr0user]").value="";
-        $("input[name=pr0pass]").value="";
-        app.getCap();
-        break;
-      }
     }
 
     //log path
@@ -220,84 +218,42 @@ const app = {api: `${location.href.split("/").slice(0, 3).join("/")}/api`};
     }
     return false; //form
   };
-  
+
   //update token
-  app.getCap = () => {
-    
-    fetch(`${app.api}/cap`).then(res => res.json()).then(json => {
-      console.log(json)
+  app.getToken = () => {
+    fetch(`${app.api}/startVerify`, {
+      headers: {
+        "CONTENT-TYPE": "application/json" //wichtig lol
+      },
+      method: "GET"
     })
+      .then(res => res.json())
+      .then(json => {
+        if (json.status === "ok") {
+          prompt(json.msg, json.data.url);
 
-   /* const resolvTok = $("input[name=appToken]").value;
-    if ($("input[name=appToken]").value) {
-      fetch(`${app.api}/resolve/${resolvTok}`, {
-        headers: {
-          "CONTENT-TYPE": "application/json" //wichtig lol
-        },
-        method: "GET"
-      })
-        .then(res => res.json())
-        .then(json => {
-          if (json.status === "ok") {
-            app.token = resolvTok;
-            localStorage.setItem("token", resolvTok);
-
-            alert("token changed");
-          } else {
-            updateTokIcon(false);
-            alert("invalid token");
-          }
-        });
-    } else {
-      alert("no token!");
-
-      updateTokIcon(false);
-    }
+          fetch(`${app.api}/checkVerify/${json.data.ts}`, {
+            headers: {
+              "CONTENT-TYPE": "application/json" //wichtig lol
+            },
+            method: "GET"
+          })
+            .then(res => res.json())
+            .then(json => {
+              if (json.status === "ok") {
+                alert(json.msg);
+                $("input[name=appToken]").value = json.data;
+                app.token = json.data;
+                updateTokIcon(true);
+              } else {
+                alert("rip");
+              }
+            });
+        } else {
+          alert("rip");
+        }
+      });
     return false; //form*/
-
-    
-  };
-  
-  //update token
-  app.link = () => {
-    
-
-    fetch(`${app.api}/link`,{ headers: {
-          "CONTENT-TYPE": "application/json" //wichtig lol
-        },
-        method: "GET"
-                            }
-
-   /* const resolvTok = $("input[name=appToken]").value;
-    if ($("input[name=appToken]").value) {
-      fetch(`${app.api}/resolve/${resolvTok}`, {
-        headers: {
-          "CONTENT-TYPE": "application/json" //wichtig lol
-        },
-        method: "GET"
-      })
-        .then(res => res.json())
-        .then(json => {
-          if (json.status === "ok") {
-            app.token = resolvTok;
-            localStorage.setItem("token", resolvTok);
-
-            alert("token changed");
-          } else {
-            updateTokIcon(false);
-            alert("invalid token");
-          }
-        });
-    } else {
-      alert("no token!");
-
-      updateTokIcon(false);
-    }
-    return false; //form*/
-    app.path = "/link";
-    history.pushState(null, null, app.path);
-    setActiveView(app.path)
-    
   };
 
   //sync active nav link styling
@@ -360,7 +316,7 @@ const app = {api: `${location.href.split("/").slice(0, 3).join("/")}/api`};
               updateTokIcon(true);
             } else updateTokIcon(false);
           });
-      }
+      } else  updateTokIcon(false);
 
       if (path === "/msg" && location.href.includes("/msg:")) {
         $("view[path='/msg']").innerText = $("meta[name=msg]").getAttribute(

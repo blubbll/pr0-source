@@ -245,54 +245,9 @@
         Ihr braucht nen Token?
         <br />
         <br />
-        <input
-          type="button"
-          onclick="app.link()"
-          value="Verifizierungsprozess starten"
-        />
+        <input type="button" onclick="app.getToken()" value="Token holen" />
       </view>
-      <view path="/link">
-        <div class="form-row">
-          <form
-            onsubmit="return app.link();"
-            novalidate="novalidate"
-            action="yeet"
-          >
-            <label>Verifizieren</label>
-            <br />
 
-            <input
-              type="password"
-              name="pr0user"
-              class="text-line"
-              autocomplete="username"
-              placeholder="Nutzername"
-            />
-            <input
-              type="password"
-              name="pr0pass"
-              class="text-line"
-              autocomplete="password"
-              placeholder="Passwort"
-              onmouseenter="this.setAttribute('type', 'text')"
-              onmouseleave="this.setAttribute('type', 'password')"
-            />
-            <img src="" alt="captcha" style="width:180px; height:45px">
-            <br />
-            <br />
-            <input
-              type="submit"
-              value="Konto linken"
-              class="confirm-button add-link"
-              title="Ändere das aktuelle Anwendungstoken"
-            />
-          </form>
-
-          <!-- never put "Token" into placeholder when using with LastPass-->
-        </div>
-
-   
-      </view>
       <view path="/204">
         ZOMFG, 204 ¯\_(ツ)_/¯
         <br /><br />

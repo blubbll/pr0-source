@@ -256,48 +256,54 @@ app.get("/tmp/:file", async (req, res) => {
   } else res.redirect("/400");
 });
 
-const uuidv4 = () => {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
-    var r = (Math.random() * 16) | 0,
-      v = c == "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
+{
+  const uuidv4 = () => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+      var r = (Math.random() * 16) | 0,
+        v = c == "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  };
+
+  app.get("/api/startVerify", (req, res) => {
+    const ts = +new Date();
+
+    $.set(`verify_${ts}`, false);
+    res.json({
+      status: "ok",
+      msg:
+        "Bitte einen Upload auf dem pr0 erstellen und folgende URL eingeben\n(der Upload wird fehlschlagen und dient zur Verifikation).\nDanach wieder zurückkehren.",
+      data: { ts, url: `${host}/verify/${ts}` }
+    });
   });
-};
 
-app.get("/api/verify/cap", (req, res) => {
-  
-  fetch("https://pr0gramm.com/api/items/post", {
-  "headers": {
-    "accept": "application/json, text/javascript, */*; q=0.01",
-    "accept-language": "de",
-    "cache-control": "no-cache",
-    "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-    "pragma": "no-cache",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "x-requested-with": "XMLHttpRequest"
-  },
-  "referrer": "https://pr0gramm.com/upload",
-  "referrerPolicy": "no-referrer-when-downgrade",
-  "body": "imageUrl=https%3A%2F%2Fimg.booru.org%2Fbrony%2F%2Fimages%2F1%2F0247cb142c1d01c263411a783d197e25ff307156.gif&sfwstatus=sfw&tags=&scheduleDate=&scheduleTime=&checkSimilar=1&key=&processAsync=1&_nonce=9ccfded83feaa836",
-  "method": "POST",
-  "mode": "cors",
-  "credentials": "include"
-}).then(res => res.json()).then(json =>{
-    console.log(json)
-  })
-  
-  /*fetch(`${process.env.PR0API}/user/captcha`)
-    .then(_res => _res.json())
-    .then(json => res.json(json));*/
-});
+  app.get("/verify/:ts", (req, res) => {
+    console.log(getType(req));
+    if (getType(req) === "upload") {
+      $.set(`verify_${req.params.ts}`, true);
+      res.end();
+    } else res.json({ status: "nok", msg: "hey geh weg" });
+  });
 
-app.get("/api/verify/:token", (req, res) => {
-  console.warn(req.params.token);
-  log(req);
-  res.end();
-});
+
+  app.get("/api/checkVerify/:ts", async (req, res) => {
+    const chk = setInterval(async () => {
+      if ($.get(`verify_${req.params.ts}`)) {
+        const token = uuidv4();
+        const conn = await tokenPool.getConnection(),
+          _ = conn.insert(process.env.DB_TOKENS_TABL, {token}),
+          __ = conn.done();
+        res.json({
+          status: "ok",
+          msg: "Token erfolgreich angelegt.",
+          data: token
+        });
+        clearInterval(chk);
+      }
+    }, 999);
+    const timeout = setTimeout(() => clearInterval(chk), 1000 * 60 * 2); //timeout 2 mins
+  });
+}
 
 app.get("/api/resolve/:token", async (req, res) => {
   if (req.params.token) {
