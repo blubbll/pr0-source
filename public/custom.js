@@ -17,7 +17,9 @@ const app = {
     console.debug("active view was set to", path);
 
     //update document title
-    document.title = `${app.otitle} ${path}`; //hairspace
+    document.title = `${app.otitle}${
+      path === "/" ? "" : path.replace("/", " – ")
+    }`;
 
     //set currently active view
     for (const _view of $$("view")) {
