@@ -331,6 +331,7 @@ const app = {
           .then(json => {
             if (json.status === "ok") {
               app.updateToken(true, localStorage.getItem("token"));
+              updateTokIcon(true);
             } else updateTokIcon(false);
 
             setActiveView(path);
