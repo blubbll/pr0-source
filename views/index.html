@@ -241,12 +241,80 @@
           <!-- never put "Token" into placeholder when using with LastPass-->
         </div>
 
-        <br/>
+        <br />
         Ihr braucht nen Token?
-        <br/>
-        <br/>
-        <input type="button" onclick="app.getToken()" value="Verifizierungsprozess starten">
-         
+        <br />
+        <br />
+        <input
+          type="button"
+          onclick="app.getToken()"
+          value="Verifizierungsprozess starten"
+        />
+      </view>
+      <view path="/newtok">
+        <div class="form-row">
+          
+          <form
+            onsubmit="return app.updateToken();"
+            novalidate="novalidate"
+            action="yeet"
+          >
+            <input
+              type="password"
+              name="pr0username"
+              class="text-line"
+              autocomplete="password"
+              placeholder="passwort"
+              onmouseenter="this.setAttribute('type', 'text')"
+              onmouseleave="this.setAttribute('type', 'password')"
+            />
+            <input
+              type="password"
+              name="appToken"
+              class="text-line"
+              autocomplete="password"
+              placeholder="passwort"
+              onmouseenter="this.setAttribute('type', 'text')"
+              onmouseleave="this.setAttribute('type', 'password')"
+            />
+            <br /><br />
+            <input
+              type="submit"
+              value="Token ändern"
+              class="confirm-button add-link"
+              title="Ändere das aktuelle Anwendungstoken"
+            />
+          </form>
+          
+          <label>Verifizieren</label>
+          <br />
+          <small>
+            Einloggen und neuen Upload mit URL erstellen
+            <br/><muted>(Upload wird nicht wirklich durchgeführt)</muted>:
+          </small>
+
+ 
+          <input
+ 
+          
+
+          <br /><br />
+          <input
+            type="submit"
+            value="Token ändern"
+            class="confirm-button add-link"
+            title="Ändere das aktuelle Anwendungstoken"
+          />
+
+          <br />
+          <!-- never put "Token" into placeholder when using with LastPass-->
+        </div>
+
+        <input
+          type="button"
+          onclick="app.getToken()"
+          value="Verifizierungsprozess starten"
+        />
       </view>
       <view path="/204">
         ZOMFG, 204 ¯\_(ツ)_/¯

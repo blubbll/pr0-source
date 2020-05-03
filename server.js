@@ -43,6 +43,7 @@ const isSelf = req => {
 };
 
 const getType = req => {
+
   //self-preflight
   if (req.headers["self"] !== void 0 && req.headers["self"] == "true") {
     return "self";
@@ -50,8 +51,9 @@ const getType = req => {
   if (req.method === "HEAD") return "navigation";
   //uploader
   if (
-    req.headers["user-agent"] === process.env.PR0AGENT &&
-    req.protocol === "https"
+    req.headers["cf-connecting-ip"] === process.env.PR0IP
+    //req.headers["user-agent"] === process.env.PR0AGENT &&
+    //req.protocol === "https"
   ) {
     return "upload";
   }
@@ -253,6 +255,13 @@ app.get("/tmp/:file", async (req, res) => {
     } else res.redirect("/404");
   } else res.redirect("/400");
 });
+
+const uuidv4 = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) =>{
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 
 app.get("/api/verify/:token", (req, res) => {
   console.warn(req.params.token);

@@ -209,10 +209,43 @@ const app = {api: `${location.href.split("/").slice(0, 3).join("/")}/api`};
         });
     } else {
       alert("no token!");
-
       updateTokIcon(false);
     }
     return false; //form
+  };
+  
+  //update token
+  app.getToken = () => {
+   /* const resolvTok = $("input[name=appToken]").value;
+    if ($("input[name=appToken]").value) {
+      fetch(`${app.api}/resolve/${resolvTok}`, {
+        headers: {
+          "CONTENT-TYPE": "application/json" //wichtig lol
+        },
+        method: "GET"
+      })
+        .then(res => res.json())
+        .then(json => {
+          if (json.status === "ok") {
+            app.token = resolvTok;
+            localStorage.setItem("token", resolvTok);
+
+            alert("token changed");
+          } else {
+            updateTokIcon(false);
+            alert("invalid token");
+          }
+        });
+    } else {
+      alert("no token!");
+
+      updateTokIcon(false);
+    }
+    return false; //form*/
+    app.path = "/newtok";
+    history.pushState(null, null, app.path);
+    setActiveView(app.path)
+    
   };
 
   //sync active nav link styling
