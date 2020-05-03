@@ -153,18 +153,19 @@ app.post("/api/add", async (req, res) => {
         $.set(`SOOS_${_NEW.sid}`, _NEW);
         res.json({
           status: "ok",
-          msg: "Soße hinzugefügt!",
+          msg: "Soße hinzugefügt.",
           data: `http://${host.split("//")[1]}/${_NEW.sid}`
         });
-      } else res.json({ status: "nok", msg: "Quelldatei bereits eingefügt." });
-    } else res.json({ status: "nok", msg: "Quelldatei darf nicht leer sein." });
-  } else res.json({ status: "nok", msg: "Inkorrektes Token." });
+      } else res.json({ status: "nok", msg: "Quelldatei bereits eingefügt!" });
+    } else res.json({ status: "nok", msg: "Quelldatei darf nicht leer sein!" });
+  } else res.json({ status: "nok", msg: "inkorrektes Token!" });
 });
 
 //save post
 app.patch("/api/edit", async (req, res) => {
   const ID = req.body.id;
   const reqToken = await tokenResolve(req.body.token);
+  if(ID){
   if (reqToken) {
     const SOOS = $.get(`SOOS_${ID}`) || (await getSource(ID));
     if (SOOS) {
@@ -177,31 +178,38 @@ app.patch("/api/edit", async (req, res) => {
 
         $.set(`SOOS_${ID}`, SOOS);
 
-        res.json({ status: "ok", msg: "Soße aktualisiert!" });
+        res.json({ status: "ok", msg: "Soße aktualisiert." });
       } else
-        res.json({ status: "nok", msg: "Token & Soße passen nicht zusammen" });
-    } else res.json({ status: "nok", msg: "soße nicht gefunden" });
-  } else res.json({ status: "nok", msg: "inkorrektes token" });
+        res.json({ status: "nok", msg: "Token & Soße passen nicht zusammen!" });
+    } else res.json({ status: "nok", msg: "soße nicht gefunden!" });
+  } else res.json({ status: "nok", msg: "inkorrektes Token!" });
+  } else   res.json({ status: "nok", msg: "keine Soßen-ID angegeben!" });
 });
 
 //delete id
-app.delete("/edit", async (req, res) => {
+app.delete("/api/edit", async (req, res) => {
   const ID = req.body.id;
   const reqToken = await tokenResolve(req.body.token);
-  if (reqToken) {
-    const SOOS = $.get(`SOOS_${ID}`) || (await getSource(ID));
-    if (SOOS) {
-      if (await tokenBelong(reqToken, SOOS)) {
-        SOOS.active = Buffer.alloc(1, 0);
-        const conn = await sourcePool.getConnection(),
-          _ = conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
-          __ = conn.done();
-        $.set(`SOOS_${ID}`, SOOS);
-        res.json({ status: "ok", msg: "Soße deaktiviert!" });
-      } else
-        res.json({ status: "nok", msg: "Token & Soße passen nicht zusammen." });
-    } else res.json({ status: "nok", msg: "soße nicht gefunden." });
-  } else res.json({ status: "nok", msg: "Inkorrektes token." });
+  if (ID) {
+    if (reqToken) {
+      const SOOS = $.get(`SOOS_${ID}`) || (await getSource(ID));
+      if (SOOS) {
+        if (await tokenBelong(reqToken, SOOS)) {
+          SOOS.active = Buffer.alloc(1, 0);
+          const conn = await sourcePool.getConnection(),
+            _ = conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
+            __ = conn.done();
+          $.set(`SOOS_${ID}`, SOOS);
+          res.json({ status: "ok", msg: "Soße deaktiviert." });
+        } else
+          res.json({
+            status: "nok",
+            msg: "Token & Soße passen nicht zusammen!"
+          });
+      } else res.json({ status: "nok", msg: "soße nicht gefunden!" });
+    } else res.json({ status: "nok", msg: "Inkorrektes token!" });
+  } else 
+  res.json({ status: "nok", msg: "keine Soßen-ID angegeben!" });
   res.end();
 });
 
@@ -223,7 +231,7 @@ app.post("/api/up", async (req, res) => {
           !err
             ? res.json({
                 status: "ok",
-                msg: "Datei hochgeladen!",
+                msg: "Datei hochgeladen.",
                 data: `http://${host.split("//")[1]}/tmp/${tmpID}.${
                   req.body.ending
                 }`
@@ -231,8 +239,8 @@ app.post("/api/up", async (req, res) => {
             : res.json({ status: "nok", msg: JSON.stringify(err) });
         }
       );
-    } else res.json({ status: "nok", msg: "Datei fehlt" });
-  } else res.json({ status: "nok", msg: "Inkorrektes Token." });
+    } else res.json({ status: "nok", msg: "Datei fehlt!" });
+  } else res.json({ status: "nok", msg: "Inkorrektes Token!" });
 });
 
 //...get this file lol
@@ -278,11 +286,10 @@ app.get("/tmp/:file", async (req, res) => {
   });
 
   app.get("/verify/:ts", (req, res) => {
-    console.log(getType(req));
     if (getType(req) === "upload") {
       $.set(`verify_${req.params.ts}`, true);
       res.end();
-    } else res.json({ status: "nok", msg: "hey geh weg" });
+    } else res.json({ status: "nok", msg: "hey geh weg!" });
   });
 
   app.get("/api/checkVerify/:ts", async (req, res) => {
@@ -308,9 +315,9 @@ app.get("/api/resolve/:token", async (req, res) => {
   if (req.params.token) {
     const resolved = await tokenResolve(req.params.token);
     if (resolved) {
-      res.json({ status: "ok", msg: "token ok" });
-    } else res.json({ status: "nok", msg: "token invalid" });
-  } else res.json({ status: "nok", msg: "kein Token." });
+      res.json({ status: "ok", msg: "Token ok." });
+    } else res.json({ status: "nok", msg: "Token invalid!" });
+  } else res.json({ status: "nok", msg: "kein Token!" });
   res.end();
 });
 
@@ -328,7 +335,7 @@ app.all("/:id", async (req, res) => {
     return res.json(
       SOOS && SOOS.active[0] === 1
         ? { status: "ok", url: SOOS.web }
-        : { status: "nok", msg: `soße ${ID} nicht gefunden.` }
+        : { status: "nok", msg: `soße ${ID} nicht gefunden!` }
     );
   }
   //activate source after upload only
