@@ -165,25 +165,28 @@ app.post("/api/add", async (req, res) => {
 app.patch("/api/edit", async (req, res) => {
   const ID = req.body.id;
   const reqToken = await tokenResolve(req.body.token);
-  if(ID){
-  if (reqToken) {
-    const SOOS = $.get(`SOOS_${ID}`) || (await getSource(ID));
-    if (SOOS) {
-      if (await tokenBelong(reqToken, SOOS)) {
-        SOOS.active = Buffer.alloc(1, 1);
-        SOOS.web = req.body.web.trim();
-        const conn = await sourcePool.getConnection(),
-          _ = conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
-          __ = conn.done();
+  if (ID) {
+    if (reqToken) {
+      const SOOS = $.get(`SOOS_${ID}`) || (await getSource(ID));
+      if (SOOS) {
+        if (await tokenBelong(reqToken, SOOS)) {
+          SOOS.active = Buffer.alloc(1, 1);
+          SOOS.web = req.body.web.trim();
+          const conn = await sourcePool.getConnection(),
+            _ = conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
+            __ = conn.done();
 
-        $.set(`SOOS_${ID}`, SOOS);
+          $.set(`SOOS_${ID}`, SOOS);
 
-        res.json({ status: "ok", msg: "Soße aktualisiert." });
-      } else
-        res.json({ status: "nok", msg: "Token & Soße passen nicht zusammen!" });
-    } else res.json({ status: "nok", msg: "soße nicht gefunden!" });
-  } else res.json({ status: "nok", msg: "inkorrektes Token!" });
-  } else   res.json({ status: "nok", msg: "keine Soßen-ID angegeben!" });
+          res.json({ status: "ok", msg: "Soße aktualisiert." });
+        } else
+          res.json({
+            status: "nok",
+            msg: "Token & Soße passen nicht zusammen!"
+          });
+      } else res.json({ status: "nok", msg: "soße nicht gefunden!" });
+    } else res.json({ status: "nok", msg: "inkorrektes Token!" });
+  } else res.json({ status: "nok", msg: "keine Soßen-ID angegeben!" });
 });
 
 //delete id
@@ -208,8 +211,7 @@ app.delete("/api/edit", async (req, res) => {
           });
       } else res.json({ status: "nok", msg: "soße nicht gefunden!" });
     } else res.json({ status: "nok", msg: "Inkorrektes token!" });
-  } else 
-  res.json({ status: "nok", msg: "keine Soßen-ID angegeben!" });
+  } else res.json({ status: "nok", msg: "keine Soßen-ID angegeben!" });
   res.end();
 });
 
@@ -247,21 +249,23 @@ app.post("/api/up", async (req, res) => {
 app.get("/tmp/:file", async (req, res) => {
   const tmpFile = req.params.file;
 
-  if (tmpFile) {
-    const filePath = `${__dirname}/tmp/${tmpFile}`;
-    if (fs.existsSync(filePath)) {
-      //serve, then delete file
-      try {
-        res.sendFile(
-          filePath,
-          getType(req) === "upload" &&
-            setTimeout(() => fs.unlinkSync(filePath), 60 * 1000 * 2)
-        ); //delete in 2min
-      } catch (e) {
-        res.redirect("/500");
-      }
-    } else res.redirect("/404");
-  } else res.redirect("/400");
+  if (isUpload(req)) {
+    if (tmpFile) {
+      const filePath = `${__dirname}/tmp/${tmpFile}`;
+      if (fs.existsSync(filePath)) {
+        //serve, then delete file
+        try {
+          res.sendFile(
+            filePath,
+            getType(req) === "upload" &&
+              setTimeout(() => fs.unlinkSync(filePath), 60 * 1000 * 2)
+          ); //delete in 2min
+        } catch (e) {
+          res.redirect("/500");
+        }
+      } else res.redirect("/404");
+    } else res.redirect("/400");
+  } else res.redirect("/204");
 });
 
 {
