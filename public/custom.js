@@ -245,36 +245,46 @@ const app = {
 
   //update token
   app.getToken = () => {
-    fetch(`${app.api}/startVerify`, {
-      headers: {
-        "CONTENT-TYPE": "application/json" //wichtig lol
-      },
-      method: "GET"
-    })
-      .then(res => res.json())
-      .then(json => {
-        if (json.status === "ok") {
-          prompt(json.msg, json.data.url);
+    const next = "\nDanach auf OK klicken für den nächsten Schritt.";
+    const user = prompt(
+        "Bitte pr0-Nutzernamen eingeben, um\nden Verknüfungsvorgang zu starten." +
+          next
+      ),
+      post = "https://pr0gramm.com/new/43",
+      sett = "https://pr0gramm.com/settings/site";
+    alert(
+      "Als nächstes musst du einen bestimmten Post favorisieren.\nDrück OK um loszulegen."
+    );
+    Object.assign(document.createElement("a"), {
+      target: "_blank",
+      href: post
+    }).click();
 
-          fetch(`${app.api}/checkVerify/${json.data.ts}`, {
-            headers: {
-              "CONTENT-TYPE": "application/json" //wichtig lol
-            },
-            method: "GET"
-          })
-            .then(res => res.json())
-            .then(json => {
-              if (json.status === "ok") {
-                alert(json.msg);
-                app.updateToken(true, json.data);
-              } else {
-                alert("rip");
-              }
-            });
-        } else {
-          alert("rip");
-        }
-      });
+    prompt(
+      "Favoriten auf 'sind sichtbar für JEDEN' stellen" +
+        "Soweit alles bereit ist, klicke erneut auf OK, um dein Token zu erhalten.",
+      sett
+    );
+
+    if (user)
+      fetch(`${app.api}/verify`, {
+        headers: {
+          "CONTENT-TYPE": "application/json" //wichtig lol
+        },
+        method: "POST",
+        body: JSON.stringify({
+          user: user
+        })
+      })
+        .then(res => res.json())
+        .then(json => {
+          if (json.status === "ok") {
+          } else {
+            alert(json.msg);
+          }
+        });
+    else alert("Nutzername fehlt.");
+
     return false; //form*/
   };
 

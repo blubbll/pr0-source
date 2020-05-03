@@ -277,7 +277,39 @@ app.get("/tmp/:file", async (req, res) => {
     });
   };
 
-  app.get("/api/startVerify", (req, res) => {
+  app.post("/api/verify", (req, res) => {
+    fetch(
+      `https://pr0gramm.com/api/items/get?&likes=${req.body.user}&older=44`
+    )
+      .then(res => res.json())
+      .then(json => {
+        if (json.error && json.error === "notPublic")
+          res.json({
+            status: "nok",
+            msg: "Du hast die Favs nicht öffentlich gemacht..."
+          });
+      else 
+        if (json.items[0].id !== "43") {
+          setTimeout(() => {
+            fetch(
+              `https://pr0gramm.com/api/items/get?&likes=${req.params.user}&older=44`
+            )
+              .then(res => res.json())
+              .then(json => {
+                if (json.items[0].id !== "43") {
+                } else
+                  res.json({
+                    status: "nok",
+                    msg: "post wurde nicht favoritisiert!"
+                  });
+              });
+          }, 5000);
+        } else
+          res.json({ status: "nok", msg: "post war bereits favoritisiert!" });
+      });
+  });
+
+  /*app.get("/api/startVerify", (req, res) => {
     const ts = +new Date();
 
     $.set(`verify_${ts}`, false);
@@ -287,9 +319,9 @@ app.get("/tmp/:file", async (req, res) => {
         "Bitte einen Upload auf dem pr0 erstellen und folgende URL eingeben\n(der Upload wird fehlschlagen und dient zur Verifikation).\nDanach wieder zurückkehren.",
       data: { ts, url: `${host}/verify/${ts}` }
     });
-  });
+  });*/
 
-  app.get("/verify/:ts", (req, res) => {
+  /*app.get("/verify/:ts", (req, res) => {
     if (getType(req) === "upload") {
       $.set(`verify_${req.params.ts}`, true);
       res.end();
@@ -312,7 +344,7 @@ app.get("/tmp/:file", async (req, res) => {
       }
     }, 999);
     const timeout = setTimeout(() => clearInterval(chk), 1000 * 60 * 2); //timeout 2 mins
-  });
+  });*/
 }
 
 app.get("/api/resolve/:token", async (req, res) => {

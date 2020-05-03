@@ -2,11 +2,10 @@
 
 Kleines Proof-of-Concept, welches einem bei der Angabe bei Soßen hilft.
 
-- Auth via app-keys (für pr0Nutzer).
-  Weil's ne Webapp ist, wird hier aktuell auf einen Login verzichtet.
-  Eventuell kommt in Zukunft ein userb0t dazu und die Tokens werden resetted.
+- Auth via app-token (für pr0-Nutzer).
 - Soßen werden in MySQL-DB gespeichert
 - einfache Oberfläche mit großer Wirkung.
 - Freiheit
+- Soße!
 
 [https://s0ße.link](https://s0sse.link)
