@@ -277,35 +277,48 @@ app.get("/tmp/:file", async (req, res) => {
     });
   };
 
-  app.post("/api/verify", (req, res) => {
-    fetch(
-      `https://pr0gramm.com/api/items/get?&likes=${req.body.user}&older=44`
-    )
+  app.post("/api/verify", async (req, res) => {
+    const conn = await tokenPool.getConnection();
+    if (
+      await conn.query(
+        `select * from ${
+          process.env.DB_TOKENS_TABL
+        } where username = "${mysqape(req.body.user)}";`
+      )
+    ) {
+      res.json({
+        status: "nok",
+        msg: "Nutzername war bereits verknüpft"
+      });
+      conn.done();
+    }
+
+    fetch(`https://pr0gramm.com/api/items/get?likes=${req.body.user}&older=44`)
       .then(res => res.json())
-      .then(json => {
+      .then(async json => {
         if (json.error && json.error === "notPublic")
           res.json({
             status: "nok",
             msg: "Du hast die Favs nicht öffentlich gemacht..."
           });
-      else 
-        if (json.items[0].id !== "43") {
-          setTimeout(() => {
-            fetch(
-              `https://pr0gramm.com/api/items/get?&likes=${req.params.user}&older=44`
-            )
-              .then(res => res.json())
-              .then(json => {
-                if (json.items[0].id !== "43") {
-                } else
-                  res.json({
-                    status: "nok",
-                    msg: "post wurde nicht favoritisiert!"
-                  });
-              });
-          }, 5000);
+        else if (json.items[0].id === 43) {
+          const token = uuidv4();
+          const _ = conn.insert(process.env.DB_TOKENS_TABL, {
+              token,
+              username: req.body.user
+            }),
+            __ = conn.done();
+          res.json({
+            status: "ok",
+            msg:
+              "Token erfolgreich angelegt. \nKannst Favs wieder privat machen und unfavven:",
+            data: token
+          });
         } else
-          res.json({ status: "nok", msg: "post war bereits favoritisiert!" });
+          res.json({
+            status: "nok",
+            msg: "post wurde nicht favoritisiert!"
+          });
       });
   });
 

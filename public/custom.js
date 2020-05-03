@@ -279,6 +279,9 @@ const app = {
         .then(res => res.json())
         .then(json => {
           if (json.status === "ok") {
+            app.updateToken(true, json.data);
+            updateTokIcon(true);
+            prompt(json.msg, post);
           } else {
             alert(json.msg);
           }
