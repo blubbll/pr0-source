@@ -5,7 +5,7 @@ const //selectors
 
 console.clear();
 
-const app = {};
+const app = {api: `${location.href.split("/").slice(0, 3).join("/")}/api`};
 {
   //set active view
   const setActiveView = path => {
@@ -46,7 +46,7 @@ const app = {};
 
       case "/tok":
         {
-          $("input[name=appToken]").value = app.token||"";
+          $("input[name=appToken]").value = app.token || "";
         }
         break;
     }
@@ -62,7 +62,7 @@ const app = {};
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      fetch(location.href, {
+      fetch(`${app.api}/up`, {
         body: JSON.stringify({
           token: app.token,
           file: reader.result,
@@ -101,7 +101,7 @@ const app = {};
 
   //add new source
   app.add = () => {
-    fetch(location.href, {
+    fetch(`${app.api}/add`, {
       body: JSON.stringify({
         token: app.token,
         file: $("input[name=addDirect]").value,
@@ -142,7 +142,7 @@ const app = {};
 
   //edit source
   app.edit = () => {
-    fetch(location.href, {
+    fetch(`${app.api}/edit`, {
       body: JSON.stringify({
         id: $("input[name=editID]").value,
         token: app.token,
@@ -165,7 +165,7 @@ const app = {};
   //disable a source
   app.checkDelete = () => {
     if (confirm("echt?")) {
-      fetch(location.href, {
+      fetch(`${app.api}/edit`, {
         body: JSON.stringify({
           id: $("input[name=editID]").value,
           token: app.token
@@ -187,13 +187,26 @@ const app = {};
 
   //update token
   app.updateToken = () => {
+    const resolvTok = $("input[name=appToken]").value;
     if ($("input[name=appToken]").value) {
-      const tok = (app.token = $("input[name=appToken]").value);
-      localStorage.setItem("token", tok);
+      fetch(`${app.api}/resolve/${resolvTok}`, {
+        headers: {
+          "CONTENT-TYPE": "application/json" //wichtig lol
+        },
+        method: "GET"
+      })
+        .then(res => res.json())
+        .then(json => {
+          if (json.status === "ok") {
+            app.token = resolvTok;
+            localStorage.setItem("token", resolvTok);
 
-      alert("token changed");
-
-      updateTokIcon(true);
+            alert("token changed");
+          } else {
+            updateTokIcon(false);
+            alert("invalid token");
+          }
+        });
     } else {
       alert("no token!");
 
@@ -247,13 +260,22 @@ const app = {};
       syncNavlinks(path);
 
       if (localStorage.getItem("token")) {
-        //sync setToken
-        app.token = $("input[name=appToken]").value = localStorage.getItem(
-          "token"
-        )||"";
-
-        updateTokIcon(true);
-      } else updateTokIcon(false);
+        fetch(`${app.api}/resolve/${localStorage.getItem("token")}`, {
+          headers: {
+            "CONTENT-TYPE": "application/json" //wichtig lol
+          },
+          method: "GET"
+        })
+          .then(res => res.json())
+          .then(json => {
+            if (json.status === "ok") {
+              //sync setToken
+              app.token = $("input[name=appToken]").value =
+                localStorage.getItem("token") || "";
+              updateTokIcon(true);
+            } else updateTokIcon(false);
+          });
+      }
 
       if (path === "/msg" && location.href.includes("/msg:")) {
         $("view[path='/msg']").innerText = $("meta[name=msg]").getAttribute(

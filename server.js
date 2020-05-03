@@ -129,7 +129,7 @@ class SOOS {
 }
 
 //save post
-app.post("/add", async (req, res) => {
+app.post("/api/add", async (req, res) => {
   const reqToken = await tokenResolve(req.body.token);
   if (reqToken) {
     if (req.body.file) {
@@ -160,7 +160,7 @@ app.post("/add", async (req, res) => {
 });
 
 //save post
-app.patch("/edit", async (req, res) => {
+app.patch("/api/edit", async (req, res) => {
   const ID = req.body.id;
   const reqToken = await tokenResolve(req.body.token);
   if (reqToken) {
@@ -204,7 +204,7 @@ app.delete("/edit", async (req, res) => {
 });
 
 //tmpupload file and...
-app.post("/up", async (req, res) => {
+app.post("/api/up", async (req, res) => {
   const reqToken = await tokenResolve(req.body.token);
 
   if (reqToken) {
@@ -254,6 +254,22 @@ app.get("/tmp/:file", async (req, res) => {
   } else res.redirect("/400");
 });
 
+app.get("/api/verify/:token", (req, res) => {
+  console.warn(req.params.token);
+  log(req);
+  res.end();
+});
+
+app.get("/api/resolve/:token", async (req, res) => {
+  if (req.params.token) {
+    const resolved = await tokenResolve(req.params.token);
+    if (resolved) {
+      res.json({ status: "ok", msg: "token ok" });
+    } else res.json({ status: "nok", msg: "token invalid" });
+  } else res.json({ status: "nok", msg: "kein Token." });
+  res.end();
+});
+
 //CONCEPT4 ✓
 //-> /x
 app.all("/:id", async (req, res) => {
@@ -266,7 +282,7 @@ app.all("/:id", async (req, res) => {
   //self request via edit-preflight
   if (isSelf(req)) {
     return res.json(
-      SOOS && SOOS.active[0] !== 1
+      SOOS && SOOS.active[0] === 1
         ? { status: "ok", url: SOOS.web }
         : { status: "nok", msg: `soße ${ID} nicht gefunden.` }
     );
