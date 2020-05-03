@@ -85,8 +85,7 @@ view a {
   margin-right: 0.1rem;
 }
 
-page[auth="false"]
-  view:not([path="/"]):not([path="/auth"]):not([id="noauth"]) {
+page[auth="false"] view:not([path="/"]):not([path="/auth"]):not([id="noauth"]) {
   filter: blur(1rem);
   pointer-events: none;
 }
@@ -98,16 +97,17 @@ page[auth="false"] #noauth {
   z-index: 1;
 }
 
+view:not([id="nojs"]) {
+  display: none;
+}
 /* einfacher Content-view */
 view {
-  display: none;
   width: 50vh;
   max-width: 75vw;
   min-width: 30vw;
   flex-direction: column;
   -ms-flex-direction: column;
   font-size: 1.4rem;
-
   text-align: center;
 }
 
