@@ -252,8 +252,9 @@ const app = {
       ),
       post = "https://pr0gramm.com/new/43",
       sett = "https://pr0gramm.com/settings/site";
-    alert(
-      "Als nächstes musst du einen bestimmten Post favorisieren.\nDrück OK um loszulegen."
+    prompt(
+      "Als nächstes musst du einen bestimmten Post favoritisieren.\nDrück OK um loszulegen.",
+      post
     );
     Object.assign(document.createElement("a"), {
       target: "_blank",
@@ -290,7 +291,7 @@ const app = {
 
     return false; //form*/
   };
-  
+
   //update token
   app.clearToken = () => {
     const next = "\nDanach auf OK klicken für den nächsten Schritt.";

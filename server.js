@@ -284,14 +284,14 @@ app.get("/tmp/:file", async (req, res) => {
         `select * from ${
           process.env.DB_TOKENS_TABL
         } where username = "${mysqape(req.body.user)}";`
-      )
+      ).length
     ) {
       res.json({
         status: "nok",
-        msg: "Nutzername war bereits verknüpft"
+        msg: "Nutzername war bereits verknüpft!"
       });
       conn.done();
-    }
+    } else
 
     fetch(`https://pr0gramm.com/api/items/get?likes=${req.body.user}&older=44`)
       .then(res => res.json())
