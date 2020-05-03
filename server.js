@@ -120,11 +120,11 @@ app.post("/welcome", (req, res) => {
   res.json("yo");
 });
 
-class SOOS {
+class soos {
   constructor(obj) {
     this.web = obj.web || "";
     (this.file = obj.file || ""),
-      (this.active = obj.active || Buffer.alloc(1, 1)), //Buffer.equals to compare buffers!
+      (this.active = obj.active || Buffer.alloc(1, 0)), //Buffer.equals to compare buffers!
       (this.token = obj.token || ""),
       (this.sid = Math.floor(new Date().valueOf() * Math.random()));
   }
@@ -137,7 +137,7 @@ app.post("/api/add", async (req, res) => {
     if (req.body.file) {
       const existing = await getSourceDupe(req.body.file);
       if (!existing) {
-        const _NEW = new SOOS({
+        const _NEW = new soos({
           web: req.body.web.trim(),
           file: req.body.file.trim(),
           token: reqToken
@@ -333,6 +333,14 @@ app.all("/:id", async (req, res) => {
     );
   }
 
+  //activate source after upload only
+  if(ID && SOOS &&  isUpload(req)){
+     SOOS.active = Buffer.alloc(1, 0);
+            const conn = await sourcePool.getConnection(),
+          _ = conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
+          __ = conn.done();
+  }
+  
   ID && SOOS && SOOS.active[0] && SOOS.web
     ? [res.redirect(isUpload(req) ? SOOS.file : SOOS.web)] //link found, redirect to link
     : //entry not found, check if path is number...

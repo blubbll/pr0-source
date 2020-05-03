@@ -27,6 +27,14 @@ const app = {
       );
     }
 
+    //show noauth  display
+    $("#noauth").style.display =
+      $("page[auth=false]") &&
+      isNaN(path.slice(1)) &&
+      !["/", "/auth"].includes(path)
+        ? "block"
+        : "none";
+
     //path initialization
     switch (path) {
       case "/add":
@@ -49,7 +57,7 @@ const app = {
         }
         break;
 
-      case "/tok":
+      case "/auth":
         {
           $("input[name=appToken]").value = app.token || "";
         }
@@ -58,6 +66,12 @@ const app = {
 
     //log path
     fetch(path, { method: "HEAD" });
+  };
+
+  //go to auth from authme button
+  app.gotoAuth = () => {
+    const p = "/auth";
+    setActiveView(p), syncNavlinks(p), history.pushState(null, null, p);
   };
 
   //upload new file
@@ -191,30 +205,38 @@ const app = {
   };
 
   //update token
-  app.updateToken = () => {
-    const resolvTok = $("input[name=appToken]").value;
-    if ($("input[name=appToken]").value) {
-      fetch(`${app.api}/resolve/${resolvTok}`, {
-        headers: {
-          "CONTENT-TYPE": "application/json" //wichtig lol
-        },
-        method: "GET"
-      })
-        .then(res => res.json())
-        .then(json => {
-          if (json.status === "ok") {
-            app.token = resolvTok;
-            localStorage.setItem("token", resolvTok);
-
-            alert("token changed");
-          } else {
-            updateTokIcon(false);
-            alert("invalid token");
-          }
-        });
+  app.updateToken = (skipcheck, tok) => {
+    const update = tok => {
+      app.token = tok;
+      localStorage.setItem("token", tok);
+      $("page").setAttribute("auth", true);
+    };
+    if (skipcheck) {
+      update(tok);
+      $("input[name=appToken]").value = tok;
     } else {
-      alert("no token!");
-      updateTokIcon(false);
+      const resolvTok = $("input[name=appToken]").value;
+      if (resolvTok) {
+        fetch(`${app.api}/resolve/${resolvTok}`, {
+          headers: {
+            "CONTENT-TYPE": "application/json" //wichtig lol
+          },
+          method: "GET"
+        })
+          .then(res => res.json())
+          .then(json => {
+            if (json.status === "ok") {
+              update(resolvTok);
+              alert("Token geändert.");
+            } else {
+              updateTokIcon(false);
+              alert("invalides Token!");
+            }
+          });
+      } else {
+        alert("no token!");
+        updateTokIcon(false);
+      }
     }
     return false; //form
   };
@@ -242,9 +264,7 @@ const app = {
             .then(json => {
               if (json.status === "ok") {
                 alert(json.msg);
-                $("input[name=appToken]").value = json.data;
-                app.token = json.data;
-                updateTokIcon(true);
+                app.updateToken(true, json.data);
               } else {
                 alert("rip");
               }
@@ -297,8 +317,6 @@ const app = {
       if ($(`view[path="/${location.href.split("/")[3]}"]`)) {
         app.path = path;
       }
-      setActiveView(path);
-      syncNavlinks(path);
 
       if (localStorage.getItem("token")) {
         fetch(`${app.api}/resolve/${localStorage.getItem("token")}`, {
@@ -310,18 +328,15 @@ const app = {
           .then(res => res.json())
           .then(json => {
             if (json.status === "ok") {
-              //sync setToken
-              app.token = $("input[name=appToken]").value =
-                localStorage.getItem("token") || "";
-              updateTokIcon(true);
+              app.updateToken(true, localStorage.getItem("token"));
             } else updateTokIcon(false);
-          });
-      } else  updateTokIcon(false);
 
-      if (path === "/msg" && location.href.includes("/msg:")) {
-        $("view[path='/msg']").innerText = $("meta[name=msg]").getAttribute(
-          "value"
-        );
+            setActiveView(path);
+            syncNavlinks(path);
+          });
+      } else {
+        $("page").setAttribute("auth", false);
+        updateTokIcon(false), setActiveView(path);
       }
     }
   };

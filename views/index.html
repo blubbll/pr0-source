@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="./pr0.css" />
     <!-- server-> client path messaging -->
     <meta name="from" value="{{from}}" />
-    <meta name="msg" value="{{msg}}" />
+
     <!-- assets -->
     <link rel="stylesheet" href="./custom.css" />
     <script src="./custom.js" defer></script>
@@ -68,7 +68,7 @@
               /></svg
             >&thinsp;edit</navlink
           >
-          <navlink href="/tok">
+          <navlink href="/auth">
             auth
             <svg
               id="tok"
@@ -101,6 +101,16 @@
         Nutzerverwaltete sources halt. Cool oder?<br />
         <br />
         <muted>#hanloGamb</muted>
+      </view>
+      <view id="noauth">
+        Token fehlt!
+        <br />
+        <br />
+        <input
+          type="button"
+          value="jetzt Token setzen"
+          onclick="app.gotoAuth()"
+        />
       </view>
       <view path="/add">
         <h2><u>Neuer Soßenlink</u></h2>
@@ -210,7 +220,7 @@
           </div>
         </form>
       </view>
-      <view path="/tok">
+      <view path="/auth">
         <div class="form-row">
           <label>Token <muted>(zum zeigen hovern):</muted></label>
           <br />
@@ -245,7 +255,11 @@
         Ihr braucht nen Token?
         <br />
         <br />
-        <input type="button" onclick="app.getToken()" value="Token holen" />
+        <input
+          type="button"
+          onclick="app.getToken()"
+          value="neues Token holen"
+        />
       </view>
 
       <view path="/204">

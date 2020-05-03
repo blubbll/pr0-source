@@ -78,13 +78,26 @@ navlink:hover {
 #logo navlink:hover,
 #logo navlink:hover svg {
   color: white;
-  /*fill: white!important; /* it's important kek */
 }
 view a {
   color: #888;
   display: contents;
   margin-right: 0.1rem;
 }
+
+page[auth="false"]
+  view:not([path="/"]):not([path="/auth"]):not([id="noauth"]) {
+  filter: blur(1rem);
+  pointer-events: none;
+}
+
+page[auth="false"] #noauth {
+  position: absolute;
+  display: flex;
+  filter: none !important;
+  z-index: 1;
+}
+
 /* einfacher Content-view */
 view {
   display: none;
@@ -168,8 +181,8 @@ input[name="editWeb"] {
   color: black;
   background-color: white;
 }
-.upload-wrapper input[type="file"]:valid:hover + .upload-droparea{
-  color: black!important;
+.upload-wrapper input[type="file"]:valid:hover + .upload-droparea {
+  color: black !important;
 }
 
 /* valid msg */
