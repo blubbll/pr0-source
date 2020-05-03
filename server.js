@@ -285,13 +285,12 @@ app.get("/tmp/:file", async (req, res) => {
     } else res.json({ status: "nok", msg: "hey geh weg" });
   });
 
-
   app.get("/api/checkVerify/:ts", async (req, res) => {
     const chk = setInterval(async () => {
       if ($.get(`verify_${req.params.ts}`)) {
         const token = uuidv4();
         const conn = await tokenPool.getConnection(),
-          _ = conn.insert(process.env.DB_TOKENS_TABL, {token}),
+          _ = conn.insert(process.env.DB_TOKENS_TABL, { token }),
           __ = conn.done();
         res.json({
           status: "ok",
@@ -332,15 +331,16 @@ app.all("/:id", async (req, res) => {
         : { status: "nok", msg: `soße ${ID} nicht gefunden.` }
     );
   }
-
   //activate source after upload only
-  if(ID && SOOS &&  isUpload(req)){
-     SOOS.active = Buffer.alloc(1, 0);
-            const conn = await sourcePool.getConnection(),
-          _ = conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
-          __ = conn.done();
+  if (ID && SOOS && isUpload(req)) {
+    SOOS.active = Buffer.alloc(1, 1);
+    const conn = await sourcePool.getConnection(),
+      _ = await conn.upsert(process.env.DB_SOURCES_TABL, SOOS),
+      __ = await conn.done();
+
+    $.set(`SOOS_${ID}`, SOOS);
   }
-  
+
   ID && SOOS && SOOS.active[0] && SOOS.web
     ? [res.redirect(isUpload(req) ? SOOS.file : SOOS.web)] //link found, redirect to link
     : //entry not found, check if path is number...
