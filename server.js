@@ -279,21 +279,39 @@ app.get("/tmp/:file", async (req, res) => {
 
   app.post("/api/verify", async (req, res) => {
     const conn = await tokenPool.getConnection();
-    if (
-      (await conn.query(
-        `select * from ${
-          process.env.DB_TOKENS_TABL
-        } where username = "${mysqape(req.body.user)}";`
-      )).length
-    ) {
+    const userQuery = await conn.query(
+      `select * from ${process.env.DB_USERS_TABL} where username = "${mysqape(
+        req.body.user
+      )}";`
+    );
+
+    if (userQuery.length) {
+      let token = null;
+
+      console.log(await tokenResolve(token))
+      
+      while (await tokenResolve(token) !== void 0) token = uuidv4();
+
+      const _ = conn.upsert(process.env.DB_USERS_TABL, {
+          token: token,
+          username: req.body.user
+        }),
+        __ = conn.done();
+
+      console.log(token);
+
+      console.log(`New token for user ${req.body.user} was generated!`);
+
       res.json({
-        status: "nok",
-        msg: "Nutzername war bereits verknüpft!"
+        status: "ok",
+        msg:
+          "Neues Token erfolgreich gespeichert.. \nKannst Favs wieder privat machen und unfavven:",
+        data: token
       });
-      conn.done();
     } else
       fetch(
-        `https://pr0gramm.com/api/items/get?likes=${req.body.user}&older=44`
+        `https://pr0gramm.com/api/items/get?likes=${req.body.user}&older=${req
+          .body.post + 1}`
       )
         .then(res => res.json())
         .then(async json => {
@@ -302,9 +320,11 @@ app.get("/tmp/:file", async (req, res) => {
               status: "nok",
               msg: "Du hast die Favs nicht öffentlich gemacht..."
             });
-          else if (json.items[0].id === 43) {
-            const token = uuidv4();
-            const _ = conn.insert(process.env.DB_TOKENS_TABL, {
+          else if (json.items[0].id === req.body.post) {
+            let token;
+            while ((await tokenResolve(token)) !== null) token = uuidv4();
+
+            const _ = conn.insert(process.env.DB_USERS_TABL, {
                 token,
                 username: req.body.user
               }),
@@ -322,43 +342,6 @@ app.get("/tmp/:file", async (req, res) => {
             });
         });
   });
-
-  /*app.get("/api/startVerify", (req, res) => {
-    const ts = +new Date();
-
-    $.set(`verify_${ts}`, false);
-    res.json({
-      status: "ok",
-      msg:
-        "Bitte einen Upload auf dem pr0 erstellen und folgende URL eingeben\n(der Upload wird fehlschlagen und dient zur Verifikation).\nDanach wieder zurückkehren.",
-      data: { ts, url: `${host}/verify/${ts}` }
-    });
-  });*/
-
-  /*app.get("/verify/:ts", (req, res) => {
-    if (getType(req) === "upload") {
-      $.set(`verify_${req.params.ts}`, true);
-      res.end();
-    } else res.json({ status: "nok", msg: "hey geh weg!" });
-  });
-
-  app.get("/api/checkVerify/:ts", async (req, res) => {
-    const chk = setInterval(async () => {
-      if ($.get(`verify_${req.params.ts}`)) {
-        const token = uuidv4();
-        const conn = await tokenPool.getConnection(),
-          _ = conn.insert(process.env.DB_TOKENS_TABL, { token }),
-          __ = conn.done();
-        res.json({
-          status: "ok",
-          msg: "Token erfolgreich angelegt.",
-          data: token
-        });
-        clearInterval(chk);
-      }
-    }, 999);
-    const timeout = setTimeout(() => clearInterval(chk), 1000 * 60 * 2); //timeout 2 mins
-  });*/
 }
 
 app.get("/api/resolve/:token", async (req, res) => {
@@ -369,6 +352,26 @@ app.get("/api/resolve/:token", async (req, res) => {
     } else res.json({ status: "nok", msg: "Token invalid!" });
   } else res.json({ status: "nok", msg: "kein Token!" });
   res.end();
+});
+
+app.get("/api/randompost", async (req, res) => {
+  const action = () => {
+    const id = Math.floor(Math.random() * 3000000) + 1;
+    fetch(`https://pr0gramm.com/api/items/info?itemId=${id}`)
+      .then(_res => _res.json())
+      .then(json => {
+        if (
+          json.tags.length === 0 || //selfdeleted
+          json.tags.length === 1 && json.tags[0].tag === "text" || //selfdeleted again
+          json.tags.find(x => ["nsfw", "nsfp", "nsfl"].includes(x.tag)) //bad filters
+        ) {
+          //no selfdelted of bad filters
+          action();
+          console.log(`bad id ${id}`);
+        } else res.json({ status: "ok", data: id });
+      });
+  };
+  action();
 });
 
 //CONCEPT4 ✓
@@ -450,7 +453,7 @@ const sourcePool = $.set(
 const tokenResolve = async token => {
   const conn = await sourcePool.getConnection(),
     data = await conn.query(
-      `select * from ${process.env.DB_TOKENS_TABL} where token = "${mysqape(
+      `select * from ${process.env.DB_USERS_TABL} where token = "${mysqape(
         token
       )}";`
     ),
@@ -497,10 +500,10 @@ const getSourceDupe = async direct => {
 const tokenPool = $.set(
     "tokenPool",
     mySqlEasier.createPool({
-      host: process.env.DB_TOKENS_HOST,
-      user: process.env.DB_TOKENS_USER,
-      password: process.env.DB_TOKENS_PASS,
-      database: process.env.DB_TOKENS_NAME
+      host: process.env.DB_USERS_HOST,
+      user: process.env.DB_USERS_USER,
+      password: process.env.DB_USERS_PASS,
+      database: process.env.DB_USERS_NAME
     })
   ),
   getTOKENS = async () =>

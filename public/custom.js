@@ -247,47 +247,55 @@ const app = {
   app.getToken = () => {
     const next = "\nDanach auf OK klicken für den nächsten Schritt.";
     const user = prompt(
-        "Bitte pr0-Nutzernamen eingeben, um\nden Verknüfungsvorgang zu starten." +
+        "Bitte popups zulassen!\n\n" +
+          "Bitte pr0-Nutzernamen eingeben, um\nden Verknüfungsvorgang zu starten." +
           next
       ),
-      post = "https://pr0gramm.com/new/43",
       sett = "https://pr0gramm.com/settings/site";
-    prompt(
-      "Als nächstes musst du einen bestimmten Post favoritisieren.\nDrück OK um loszulegen.",
-      post
-    );
-    Object.assign(document.createElement("a"), {
-      target: "_blank",
-      href: post
-    }).click();
 
-    prompt(
-      "Favoriten auf 'sind sichtbar für JEDEN' stellen" +
-        "Soweit alles bereit ist, klicke erneut auf OK, um dein Token zu erhalten.",
-      sett
-    );
-
-    if (user)
-      fetch(`${app.api}/verify`, {
-        headers: {
-          "CONTENT-TYPE": "application/json" //wichtig lol
-        },
-        method: "POST",
-        body: JSON.stringify({
-          user: user
-        })
-      })
-        .then(res => res.json())
+    if (user) {
+      fetch(`${app.api}/randompost`)
+        .then(r => r.json())
         .then(json => {
-          if (json.status === "ok") {
-            app.updateToken(true, json.data);
-            updateTokIcon(true);
-            prompt(json.msg, post);
-          } else {
-            alert(json.msg);
-          }
+          const post = `https://pr0gramm.com/new/${json.data}`;
+
+          prompt(
+            "Als nächstes musst du einen bestimmten Post favoritisieren.\nDrück OK um loszulegen.",
+            post
+          );
+          Object.assign(document.createElement("a"), {
+            target: "_blank",
+            href: post
+          }).click();
+
+          prompt(
+            "Favoriten auf 'sind sichtbar für JEDEN' stellen.\n" +
+              "Soweit alles bereit ist, klicke erneut auf OK, um dein Token zu erhalten.",
+            sett
+          );
+
+          fetch(`${app.api}/verify`, {
+            headers: {
+              "CONTENT-TYPE": "application/json" //wichtig lol
+            },
+            method: "POST",
+            body: JSON.stringify({
+              user: user,
+              post: json.data
+            })
+          })
+            .then(res => res.json())
+            .then(json => {
+              if (json.status === "ok") {
+                app.updateToken(true, json.data);
+                updateTokIcon(true);
+                prompt(json.msg, post);
+              } else {
+                alert(json.msg);
+              }
+            });
         });
-    else alert("Nutzername fehlt.");
+    } else alert("Nutzername fehlt.");
 
     return false; //form*/
   };
