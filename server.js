@@ -286,19 +286,15 @@ app.get("/tmp/:file", async (req, res) => {
     );
 
     if (userQuery.length) {
-      let token = null;
+      let token;
 
-      console.log(await tokenResolve(token))
-      
-      while (await tokenResolve(token) !== void 0) token = uuidv4();
-
+      while ((token === void 0) | ((await tokenResolve(token)) !== void 0))
+        token = uuidv4();
       const _ = conn.upsert(process.env.DB_USERS_TABL, {
-          token: token,
-          username: req.body.user
+          id: userQuery[0].id,
+          token
         }),
         __ = conn.done();
-
-      console.log(token);
 
       console.log(`New token for user ${req.body.user} was generated!`);
 
@@ -362,7 +358,7 @@ app.get("/api/randompost", async (req, res) => {
       .then(json => {
         if (
           json.tags.length === 0 || //selfdeleted
-          json.tags.length === 1 && json.tags[0].tag === "text" || //selfdeleted again
+          (json.tags.length === 1 && json.tags[0].tag === "text") || //selfdeleted again
           json.tags.find(x => ["nsfw", "nsfp", "nsfl"].includes(x.tag)) //bad filters
         ) {
           //no selfdelted of bad filters
