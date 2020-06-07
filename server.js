@@ -285,41 +285,43 @@ app.get("/tmp/:file", async (req, res) => {
       )}";`
     );
 
-    if (userQuery.length) {
-      let token;
+    fetch(
+      //`https://pr0gramm.com/api/items/get?likes=${req.body.user}&older=${req
+      //  .body.post + 1}`
+      `https://pr0gramm.com/api/items/get?older=${req.body.post +
+        1}&flags=1&user=${req.body.user}&collection=favoriten`
+    )
+      .then(res => res.json())
+      .then(async json => {
+        console.log(json);
 
-      while ((token === void 0) | ((await tokenResolve(token)) !== void 0))
-        token = uuidv4();
-      const _ = conn.upsert(process.env.DB_USERS_TABL, {
-          id: userQuery[0].id,
-          token
-        }),
-        __ = conn.done();
+        if (json.error && json.error === "notPublic")
+          res.json({
+            status: "nok",
+            msg: "Du hast die Favs nicht öffentlich gemacht..."
+          });
+        //post was faved
+        else if (json.items[0].id === req.body.post) {
+          let token;
+          while ((token === void 0) | ((await tokenResolve(token)) !== void 0))
+            token = uuidv4();
 
-      console.log(`New token for user ${req.body.user} was generated!`);
+          if (userQuery.length) {
+            const _ = conn.upsert(process.env.DB_USERS_TABL, {
+                id: userQuery[0].id,
+                token
+              }),
+              __ = conn.done();
 
-      res.json({
-        status: "ok",
-        msg:
-          "Neues Token erfolgreich gespeichert.. \nKannst Favs wieder privat machen und unfavven:",
-        data: token
-      });
-    } else
-      fetch(
-        `https://pr0gramm.com/api/items/get?likes=${req.body.user}&older=${req
-          .body.post + 1}`
-      )
-        .then(res => res.json())
-        .then(async json => {
-          if (json.error && json.error === "notPublic")
+            console.log(`New token for user ${req.body.user} was generated!`);
+
             res.json({
-              status: "nok",
-              msg: "Du hast die Favs nicht öffentlich gemacht..."
+              status: "ok",
+              msg:
+                "Neues Token erfolgreich gespeichert.. \nKannst Favs wieder privat machen und unfavven:",
+              data: token
             });
-          else if (json.items[0].id === req.body.post) {
-            let token;
-            while ((await tokenResolve(token)) !== null) token = uuidv4();
-
+          } else {
             const _ = conn.insert(process.env.DB_USERS_TABL, {
                 token,
                 username: req.body.user
@@ -331,12 +333,13 @@ app.get("/tmp/:file", async (req, res) => {
                 "Token erfolgreich angelegt. \nKannst Favs wieder privat machen und unfavven:",
               data: token
             });
-          } else
-            res.json({
-              status: "nok",
-              msg: "post wurde nicht favoritisiert!"
-            });
-        });
+          }
+        } else
+          res.json({
+            status: "nok",
+            msg: "post wurde nicht favoritisiert!"
+          });
+      });
   });
 }
 

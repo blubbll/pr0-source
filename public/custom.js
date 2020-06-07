@@ -251,7 +251,7 @@ const app = {
           "Bitte pr0-Nutzernamen eingeben, um\nden Verknüfungsvorgang zu starten." +
           next
       ),
-      sett = "https://pr0gramm.com/settings/site";
+      sett = `https://pr0gramm.com/user/${user}`;
 
     if (user) {
       fetch(`${app.api}/randompost`)
@@ -296,54 +296,6 @@ const app = {
             });
         });
     } else alert("Nutzername fehlt.");
-
-    return false; //form*/
-  };
-
-  //update token
-  app.clearToken = () => {
-    const next = "\nDanach auf OK klicken für den nächsten Schritt.";
-    const user = prompt(
-        "Bitte pr0-Nutzernamen eingeben, um\nden Entknüpfungsvorgang zu starten." +
-          next
-      ),
-      post = "https://pr0gramm.com/new/70",
-      sett = "https://pr0gramm.com/settings/site";
-    alert(
-      "Als nächstes musst du einen bestimmten Post favorisieren.\nDrück OK um loszulegen."
-    );
-    Object.assign(document.createElement("a"), {
-      target: "_blank",
-      href: post
-    }).click();
-
-    prompt(
-      "Favoriten auf 'sind sichtbar für JEDEN' stellen" +
-        "Soweit alles bereit ist, klicke erneut auf OK, um dein Token zu erhalten.",
-      sett
-    );
-
-    if (user)
-      fetch(`${app.api}/unverify`, {
-        headers: {
-          "CONTENT-TYPE": "application/json" //wichtig lol
-        },
-        method: "POST",
-        body: JSON.stringify({
-          user: user
-        })
-      })
-        .then(res => res.json())
-        .then(json => {
-          if (json.status === "ok") {
-            app.updateToken(true, json.data);
-            updateTokIcon(true);
-            prompt(json.msg, post);
-          } else {
-            alert(json.msg);
-          }
-        });
-    else alert("Nutzername fehlt.");
 
     return false; //form*/
   };
